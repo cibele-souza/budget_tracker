@@ -1,15 +1,35 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import TopNav from './components/TopNav';
 import UploadPage from './pages/UploadPage';
 import TransactionsPage from './pages/TransactionsPage';
 import BudgetPage from './pages/BudgetPage';
 import DashboardPage from './pages/DashboardPage';
-import type { Transaction, Import } from './types';
+import type { Transaction, Import, Budget } from './types';
+import {
+   loadTransactions,
+   loadBudgets,
+   loadImports,
+   saveTransactions,
+   saveBudgets,
+   saveImports,
+} from './utils/storage';
 
 export default function App() {
-   const [transactions, setTransactions] = useState<Transaction[]>([]);
-   const [imports, setImports] = useState<Import[]>([]);
+   const [transactions, setTransactions] =
+      useState<Transaction[]>(loadTransactions);
+   const [budgets, setBudgets] = useState<Budget[]>(loadBudgets);
+   const [imports, setImports] = useState<Import[]>(loadImports);
+
+   useEffect(() => {
+      saveTransactions(transactions);
+   }, [transactions]);
+   useEffect(() => {
+      saveBudgets(budgets);
+   }, [budgets]);
+   useEffect(() => {
+      saveImports(imports);
+   }, [imports]);
 
    return (
       <BrowserRouter>
@@ -42,8 +62,25 @@ export default function App() {
                         />
                      }
                   />
-                  <Route path="/budget" element={<BudgetPage />} />
-                  <Route path="/" element={<DashboardPage />} />
+                  <Route
+                     path="/budget"
+                     element={
+                        <BudgetPage
+                           budgets={budgets}
+                           transactions={transactions}
+                           onBudgetsChange={setBudgets}
+                        />
+                     }
+                  />
+                  <Route
+                     path="/"
+                     element={
+                        <DashboardPage
+                           transactions={transactions}
+                           budgets={budgets}
+                        />
+                     }
+                  />
                </Routes>
             </main>
          </div>

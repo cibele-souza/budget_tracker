@@ -1,6 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import type { Transaction } from '../types';
 import type { RawRow } from './parseFile';
+import { classifyTransaction } from './classify';
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -32,7 +33,10 @@ export function normaliseBourso(
          date: parseDate(String(row['dateOp'])),
          description: String(row['label'] ?? '').trim(),
          amount: parseAmount(row['amount'] as string),
-         category: 'Non classé' as const,
+         category: classifyTransaction(
+            String(row['label'] ?? '').trim(),
+            String(row['category'] ?? '').trim(),
+         ),
          bankCategory: String(row['category'] ?? '').trim(),
          bankName: 'BoursoBank',
          importId,
@@ -52,7 +56,10 @@ export function normaliseHelloBank(
          date: parseDate(String(row['Date operation'])),
          description: String(row['Libelle operation'] ?? '').trim(),
          amount: parseAmount(row['Montant operation'] as string | number),
-         category: 'Non classé' as const,
+         category: classifyTransaction(
+            String(row['Libelle operation'] ?? '').trim(),
+            String(row['Sous Categorie operation'] ?? '').trim(),
+         ),
          bankCategory: String(row['Sous Categorie operation'] ?? '').trim(),
          bankName: 'Hello Bank',
          importId,
