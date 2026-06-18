@@ -46,7 +46,7 @@ export default function CategoryBreakdownChart({
 
    if (data.length === 0) {
       return (
-         <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm flex items-center justify-center h-64 text-gray-400 text-sm">
+         <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm flex items-center justify-center h-64 text-my-gray text-sm">
             No data for the selected period.
          </div>
       );
@@ -57,7 +57,7 @@ export default function CategoryBreakdownChart({
 
    return (
       <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-         <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-4">
+         <h2 className="text-sm font-medium text-my-gray uppercase tracking-wide mb-4">
             Spending by Category
          </h2>
          <ResponsiveContainer width="100%" height={chartHeight}>
@@ -99,8 +99,16 @@ export default function CategoryBreakdownChart({
                   cursor={{ fill: 'rgba(0,0,0,0.04)' }}
                />
                <Legend />
-               <Bar dataKey="Spent" fill="#ef4444" radius={[0, 4, 4, 0]} />
-               <Bar dataKey="Budget" fill="#d1d5db" radius={[0, 4, 4, 0]} />
+               <Bar
+                  dataKey="Spent"
+                  fill="var(--color-my-red)"
+                  radius={[0, 4, 4, 0]}
+               />
+               <Bar
+                  dataKey="Budget"
+                  fill="var(--color-my-chart-gray)"
+                  radius={[0, 4, 4, 0]}
+               />
             </BarChart>
          </ResponsiveContainer>
       </div>

@@ -23,7 +23,7 @@ export default function TransactionTable({
 
    if (transactions.length === 0) {
       return (
-         <p className="text-gray-400 text-sm text-center mt-6">
+         <p className="text-my-gray text-sm text-center mt-6">
             No transactions yet. Upload a file to get started.
          </p>
       );
@@ -35,22 +35,22 @@ export default function TransactionTable({
          <div className="flex flex-wrap justify-end gap-2 mb-2">
             <button
                onClick={() => setShowBankCategory((prev) => !prev)}
-               className="text-xs text-gray-500 border border-gray-300 rounded px-3 py-1 hover:bg-gray-100 transition-colors"
+               className="text-xs text-my-gray border border-my-border-gray rounded px-3 py-1 hover:bg-my-bg-gray transition-colors"
             >
                {showBankCategory ? 'Hide' : 'Show'} bank category
             </button>
             <button
                onClick={() => setShowSourceFile((prev) => !prev)}
-               className="text-xs text-gray-500 border border-gray-300 rounded px-3 py-1 hover:bg-gray-100 transition-colors"
+               className="text-xs text-my-gray border border-my-border-gray rounded px-3 py-1 hover:bg-my-bg-gray transition-colors"
             >
                {showSourceFile ? 'Hide' : 'Show'} source file
             </button>
          </div>
 
          <div className="overflow-x-auto w-full">
-            <table className="min-w-[700px] w-full text-sm border-collapse">
+            <table className="min-w-175 w-full text-sm border-collapse">
                <thead>
-                  <tr className="bg-gray-100 text-left text-gray-600 uppercase text-xs tracking-wide">
+                  <tr className="bg-my-bg-gray text-left text-my-gray uppercase text-xs tracking-wide">
                      <th className="px-2 py-2">Date</th>
                      <th className="px-2 py-2">Description</th>
                      <th className="px-2 py-2 text-right">Amount</th>
@@ -68,18 +68,18 @@ export default function TransactionTable({
                   {transactions.map((transaction) => {
                      const amountClass =
                         transaction.amount >= 0
-                           ? 'text-green-700 font-medium'
-                           : 'text-red-800 font-medium';
+                           ? 'text-my-green font-medium'
+                           : 'text-my-red font-medium';
 
                      return (
                         <tr
                            key={transaction.id}
-                           className="border-t border-gray-200 hover:bg-gray-50"
+                           className="border-t border-my-border-gray hover:bg-my-bg-light-gray"
                         >
-                           <td className="px-2 py-1 text-gray-500 whitespace-nowrap">
+                           <td className="px-2 py-1 text-my-gray whitespace-nowrap">
                               {transaction.date}
                            </td>
-                           <td className="px-2 py-1 text-gray-900">
+                           <td className="px-2 py-1 text-gray-800">
                               {transaction.description}
                            </td>
                            <td className="px-2 py-1 text-right whitespace-nowrap">
@@ -89,7 +89,7 @@ export default function TransactionTable({
                               </span>
                            </td>
                            {showBankCategory && (
-                              <td className="px-2 py-1 text-gray-500">
+                              <td className="px-2 py-1 text-my-gray">
                                  {transaction.bankCategory || '—'}
                               </td>
                            )}
@@ -102,7 +102,7 @@ export default function TransactionTable({
                                        e.target.value as Category,
                                     )
                                  }
-                                 className="text-sm border border-gray-200 rounded px-2 py-1 bg-white text-gray-700 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                 className="text-sm border border-my-border-gray rounded px-2 py-1 bg-white text-my-gray hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-my-blue"
                               >
                                  {CATEGORIES.map((cat) => (
                                     <option key={cat} value={cat}>
@@ -111,11 +111,11 @@ export default function TransactionTable({
                                  ))}
                               </select>
                            </td>
-                           <td className="px-2 py-1 text-gray-500 whitespace-nowrap">
+                           <td className="px-2 py-1 text-my-gray whitespace-nowrap">
                               {transaction.bankName}
                            </td>
                            {showSourceFile && (
-                              <td className="px-2 py-1 text-gray-400 text-xs whitespace-nowrap">
+                              <td className="px-2 py-1 text-my-gray text-xs whitespace-nowrap">
                                  {importMap[transaction.importId] ?? '—'}
                               </td>
                            )}

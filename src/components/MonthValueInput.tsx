@@ -61,11 +61,11 @@ export default function MonthValueInput({
          }}
          className={`
         w-12 text-xs border rounded px-1 py-1 bg-white text-right
-        focus:outline-none focus:ring-2 focus:ring-blue-500
+        focus:outline-none focus:ring-1 focus:ring-my-blue
         ${
            hasOverride
-              ? 'border-blue-300 text-blue-700'
-              : 'border-gray-200 text-gray-400 hover:border-gray-400'
+              ? 'border-my-blue text-my-blue'
+              : 'border-my-border-gray text-my-gray hover:border-gray-400'
         }
       `}
       />

@@ -15,14 +15,14 @@ function Card({
 }) {
    const valueColor =
       highlight === 'red'
-         ? 'text-red-600'
+         ? 'text-my-red'
          : highlight === 'green'
-           ? 'text-green-600'
+           ? 'text-my-green'
            : 'text-gray-800';
 
    return (
-      <div className="bg-white border border-gray-200 rounded-xl px-6 py-4 flex flex-col gap-1 shadow-sm">
-         <span className="text-xs text-gray-500 uppercase tracking-wide">
+      <div className="bg-white border border-my-border-gray rounded-xl px-6 py-4 flex flex-col gap-1 shadow-sm">
+         <span className="text-xs text-my-gray uppercase tracking-wide">
             {label}
          </span>
          <span className={`text-2xl font-semibold ${valueColor}`}>{value}</span>

@@ -92,7 +92,7 @@ export default function DropZone({ onFileParsed }: DropZoneProps) {
             />
 
             {isLoading ? (
-               <p className="text-gray-500 text-sm">Importing...</p>
+               <p className="text-my-gray text-sm">Importing...</p>
             ) : (
                <>
                   <div className="flex justify-center mb-3">
@@ -111,7 +111,7 @@ export default function DropZone({ onFileParsed }: DropZoneProps) {
                         />
                      </svg>
                   </div>
-                  <p className="text-gray-600 font-medium">
+                  <p className="text-my-gray font-medium">
                      Drop your bank export here
                   </p>
                   <p className="text-gray-400 text-sm mt-1">
@@ -122,10 +122,10 @@ export default function DropZone({ onFileParsed }: DropZoneProps) {
          </div>
 
          {error && (
-            <p className="mt-3 text-sm text-red-600 text-center">{error}</p>
+            <p className="mt-3 text-sm text-my-red text-center">{error}</p>
          )}
          {success && (
-            <p className="mt-3 text-sm text-green-600 text-center">{success}</p>
+            <p className="mt-3 text-sm text-my-green text-center">{success}</p>
          )}
       </div>
    );

@@ -1,26 +1,12 @@
 import { Fragment } from 'react';
 import type { CategorySummary } from '../utils/aggregate';
+import { MONTHS } from '../utils/constants';
 
 interface CategoryBreakdownTableProps {
    categories: CategorySummary[];
    selectedYear: number;
    selectedMonths: number[];
 }
-
-const MONTH_NAMES = [
-   'Jan',
-   'Feb',
-   'Mar',
-   'Apr',
-   'May',
-   'Jun',
-   'Jul',
-   'Aug',
-   'Sep',
-   'Oct',
-   'Nov',
-   'Dec',
-];
 
 export default function CategoryBreakdownTable({
    categories,
@@ -31,7 +17,7 @@ export default function CategoryBreakdownTable({
 
    if (active.length === 0) {
       return (
-         <p className="text-gray-400 text-sm text-center mt-6">
+         <p className="text-my-gray text-sm text-center mt-6">
             No data for the selected period.
          </p>
       );
@@ -46,7 +32,7 @@ export default function CategoryBreakdownTable({
       <div className="overflow-x-auto">
          <table className="w-full text-sm border-collapse">
             <thead>
-               <tr className="bg-gray-100 text-gray-600 uppercase text-xs tracking-wide">
+               <tr className="bg-my-bg-gray text-my-gray uppercase text-xs tracking-wide">
                   <th className="px-3 py-2 text-left" rowSpan={2}>
                      Category
                   </th>
@@ -54,16 +40,16 @@ export default function CategoryBreakdownTable({
                      <th
                         key={m}
                         colSpan={2}
-                        className="px-3 py-2 text-center border-l border-gray-200"
+                        className="px-3 py-2 text-center border-l border-my-border-gray"
                      >
-                        {MONTH_NAMES[m]} {selectedYear}
+                        {MONTHS[m]} {selectedYear}
                      </th>
                   ))}
                </tr>
-               <tr className="bg-gray-50 text-gray-500 uppercase text-xs tracking-wide">
+               <tr className="bg-my-bg-light-gray text-my-gray uppercase text-xs tracking-wide">
                   {monthsToShow.map((m) => (
                      <Fragment key={m}>
-                        <th className="px-3 py-1 text-right border-l border-gray-200">
+                        <th className="px-3 py-1 text-right border-l border-my-border-gray">
                            Spent
                         </th>
                         <th className="px-3 py-1 text-right">Budget</th>
@@ -75,9 +61,9 @@ export default function CategoryBreakdownTable({
                {active.map((c) => (
                   <tr
                      key={c.category}
-                     className="border-t border-gray-200 hover:bg-gray-50"
+                     className="border-t border-my-border-gray hover:bg-my-bg-light-gray"
                   >
-                     <td className="px-3 py-2 font-medium text-gray-700 whitespace-nowrap">
+                     <td className="px-3 py-2 font-medium text-my-gray whitespace-nowrap">
                         {c.category}
                      </td>
                      {monthsToShow.map((m) => {
@@ -89,12 +75,12 @@ export default function CategoryBreakdownTable({
                         return (
                            <Fragment key={monthKey}>
                               <td
-                                 className={`px-3 py-2 text-right border-l border-gray-200 whitespace-nowrap font-medium
-                      ${isOver ? 'text-red-600' : spent > 0 ? 'text-gray-800' : 'text-gray-300'}`}
+                                 className={`px-3 py-2 text-right border-l border-my-border-gray whitespace-nowrap font-medium
+                      ${isOver ? 'text-my-red' : spent > 0 ? 'text-my-green' : 'text-gray-300'}`}
                               >
                                  {spent > 0 ? `${spent.toFixed(2)} €` : '-'}
                               </td>
-                              <td className="px-3 py-2 text-right whitespace-nowrap text-gray-500">
+                              <td className="px-3 py-2 text-right whitespace-nowrap text-my-gray">
                                  {budget > 0 ? `${budget.toFixed(2)} €` : '-'}
                               </td>
                            </Fragment>

@@ -15,3 +15,16 @@ input[type='number'] {
    appearance: textfield;
    -moz-appearance: textfield;
 }
+
+@theme {
+   --color-my-gray: #6b7280; /* gray-500 */
+   --color-my-blue: #0369a1; /* sky-700 */
+   --color-my-red: #f43f5e; /* rose-500 */
+   --color-my-green: #059669; /* emerald-600 */
+
+   --color-my-bg-gray: #f3f4f6; /* gray-100 */
+   --color-my-bg-light-gray: #f9fafb; /* gray-50 */
+   --color-my-border-gray: #e5e7eb; /*gray-200 */
+
+   --color-my-chart-gray: #d1d5db; /* gray-300 */
+}

@@ -2,6 +2,7 @@ import type { Budget } from '../types';
 import DefaultValueInput from './DefaultValueInput';
 import ApplyDefaultButton from './ApplyDefaultButton';
 import MonthValueInput from './MonthValueInput';
+import { MONTHS } from '../utils/constants';
 
 interface BudgetRowProps {
    budget: Budget;
@@ -9,21 +10,6 @@ interface BudgetRowProps {
    onChange: (updated: Budget) => void;
    rowIndex: number;
 }
-
-const MONTHS = [
-   'Jan',
-   'Feb',
-   'Mar',
-   'Apr',
-   'May',
-   'Jun',
-   'Jul',
-   'Aug',
-   'Sep',
-   'Oct',
-   'Nov',
-   'Dec',
-];
 
 export default function BudgetRow({
    budget,
@@ -60,28 +46,26 @@ export default function BudgetRow({
    return (
       <tr className="border-t border-gray-200 hover:bg-gray-50">
          {/* Category name */}
-         <td className="px-2 py-1 text-sm font-medium text-gray-700 whitespace-nowrap">
+         <td className="px-2 py-1 text-sm font-medium text-my-gray whitespace-nowrap">
             {budget.category}
          </td>
 
-         {/* Default value */}
-         <td className="pl-2 pr-1 py-1">
-            <DefaultValueInput
-               value={budget.defaultValue}
-               onChange={handleDefaultChange}
-            />
-         </td>
-
-         {/* Apply default button */}
-         <td className="pl-1 pr-2 py-1">
-            <ApplyDefaultButton onClick={handleApplyDefault} />
+         {/* Default value + Apply button */}
+         <td className="px-2 py-1 text-center" colSpan={1}>
+            <div className="flex items-center justify-center gap-2">
+               <DefaultValueInput
+                  value={budget.defaultValue}
+                  onChange={handleDefaultChange}
+               />
+               <ApplyDefaultButton onClick={handleApplyDefault} />
+            </div>
          </td>
 
          {/* 12 month inputs */}
          {MONTHS.map((_, i) => {
             const monthKey = `${selectedYear}-${String(i + 1).padStart(2, '0')}`;
             return (
-               <td key={monthKey} className="px-0 py-1">
+               <td key={monthKey} className="px-0 py-1 text-center">
                   <MonthValueInput
                      monthKey={monthKey}
                      defaultValue={budget.defaultValue}
