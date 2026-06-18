@@ -96,13 +96,15 @@ export default function SpendingOverTimeChart({
                <XAxis dataKey="month" tick={{ fontSize: 12 }} />
                <YAxis tick={{ fontSize: 12 }} unit=" €" width={70} />
                <Tooltip
-                  formatter={(value) =>
-                     typeof value === 'number' ? `${value.toFixed(2)} €` : value
-                  }
+                  formatter={(value, name) => {
+                     if (typeof value !== 'number' || value === 0) return null;
+                     return [`${value.toFixed(2)} €`, name];
+                  }}
+                  cursor={{ fill: 'rgba(0,0,0,0.04)' }}
                />
                <Legend />
                <Bar dataKey="Spent" fill="#ef4444" radius={[4, 4, 0, 0]} />
-               <Bar dataKey="Budget" fill="#93c5fd" radius={[4, 4, 0, 0]} />
+               <Bar dataKey="Budget" fill="#d1d5db" radius={[4, 4, 0, 0]} />
             </BarChart>
          </ResponsiveContainer>
       </div>

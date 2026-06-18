@@ -16,8 +16,9 @@ export default function BudgetPage({
    onBudgetsChange,
 }: BudgetPageProps) {
    const years = getAvailableYears(transactions.map((t) => t.date));
+   const currentYear = new Date().getFullYear();
    const [selectedYear, setSelectedYear] = useState<number>(
-      years[years.length - 1],
+      years.includes(currentYear) ? currentYear : years[years.length - 1],
    );
 
    function handleBudgetChange(updated: Budget) {

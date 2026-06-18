@@ -77,8 +77,8 @@ export default function DropZone({ onFileParsed }: DropZoneProps) {
           transition-colors duration-200
           ${
              isDragging
-                ? 'border-blue-500 bg-blue-50'
-                : 'border-gray-300 hover:border-blue-400 hover:bg-gray-50'
+                ? 'border-gray-500 bg-gray-50'
+                : 'border-gray-300 hover:border-gray-400 hover:bg-gray-50'
           }
           ${isLoading ? 'pointer-events-none opacity-60' : ''}
         `}
@@ -95,6 +95,22 @@ export default function DropZone({ onFileParsed }: DropZoneProps) {
                <p className="text-gray-500 text-sm">Importing...</p>
             ) : (
                <>
+                  <div className="flex justify-center mb-3">
+                     <svg
+                        className="w-8 h-8 text-gray-300"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth={1.5}
+                        stroke="currentColor"
+                     >
+                        <path
+                           strokeLinecap="round"
+                           strokeLinejoin="round"
+                           d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"
+                        />
+                     </svg>
+                  </div>
                   <p className="text-gray-600 font-medium">
                      Drop your bank export here
                   </p>

@@ -46,12 +46,13 @@ export default function BudgetTable({
                </tr>
             </thead>
             <tbody>
-               {budgets.map((budget) => (
+               {budgets.map((budget, index) => (
                   <BudgetRow
                      key={budget.category}
                      budget={budget}
                      selectedYear={selectedYear}
                      onChange={onChange}
+                     rowIndex={index}
                   />
                ))}
             </tbody>

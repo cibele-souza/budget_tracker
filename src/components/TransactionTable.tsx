@@ -32,7 +32,7 @@ export default function TransactionTable({
    return (
       <div>
          {/* Toggle */}
-         <div className="flex justify-end gap-2 mb-2">
+         <div className="flex flex-wrap justify-end gap-2 mb-2">
             <button
                onClick={() => setShowBankCategory((prev) => !prev)}
                className="text-xs text-gray-500 border border-gray-300 rounded px-3 py-1 hover:bg-gray-100 transition-colors"
@@ -47,8 +47,8 @@ export default function TransactionTable({
             </button>
          </div>
 
-         <div className="overflow-x-auto">
-            <table className="w-full text-sm border-collapse">
+         <div className="overflow-x-auto w-full">
+            <table className="min-w-[700px] w-full text-sm border-collapse">
                <thead>
                   <tr className="bg-gray-100 text-left text-gray-600 uppercase text-xs tracking-wide">
                      <th className="px-2 py-2">Date</th>

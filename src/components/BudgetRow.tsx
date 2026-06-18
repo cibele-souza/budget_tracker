@@ -7,6 +7,7 @@ interface BudgetRowProps {
    budget: Budget;
    selectedYear: number;
    onChange: (updated: Budget) => void;
+   rowIndex: number;
 }
 
 const MONTHS = [
@@ -28,6 +29,7 @@ export default function BudgetRow({
    budget,
    selectedYear,
    onChange,
+   rowIndex,
 }: BudgetRowProps) {
    function handleDefaultChange(value: number) {
       onChange({ ...budget, defaultValue: value });
@@ -63,7 +65,7 @@ export default function BudgetRow({
          </td>
 
          {/* Default value */}
-         <td className="px-0 py-1">
+         <td className="pl-2 pr-1 py-1">
             <DefaultValueInput
                value={budget.defaultValue}
                onChange={handleDefaultChange}
@@ -71,7 +73,7 @@ export default function BudgetRow({
          </td>
 
          {/* Apply default button */}
-         <td className="px-0 py-1">
+         <td className="pl-1 pr-2 py-1">
             <ApplyDefaultButton onClick={handleApplyDefault} />
          </td>
 
@@ -85,6 +87,10 @@ export default function BudgetRow({
                      defaultValue={budget.defaultValue}
                      overrideValue={budget.monthlyOverrides[monthKey]}
                      onChange={handleMonthChange}
+                     rowIndex={rowIndex}
+                     colIndex={i}
+                     totalCols={12}
+                     totalRows={26}
                   />
                </td>
             );

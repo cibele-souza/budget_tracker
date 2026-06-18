@@ -1,9 +1,10 @@
+import { Fragment } from 'react';
 import type { CategorySummary } from '../utils/aggregate';
 
 interface CategoryBreakdownTableProps {
    categories: CategorySummary[];
    selectedYear: number;
-   selectedMonths: number[]; // empty = all months
+   selectedMonths: number[];
 }
 
 const MONTH_NAMES = [
@@ -36,7 +37,6 @@ export default function CategoryBreakdownTable({
       );
    }
 
-   // Which months to display
    const monthsToShow =
       selectedMonths.length > 0
          ? selectedMonths.map((m) => m - 1)
@@ -46,7 +46,6 @@ export default function CategoryBreakdownTable({
       <div className="overflow-x-auto">
          <table className="w-full text-sm border-collapse">
             <thead>
-               {/* Month header row */}
                <tr className="bg-gray-100 text-gray-600 uppercase text-xs tracking-wide">
                   <th className="px-3 py-2 text-left" rowSpan={2}>
                      Category
@@ -57,28 +56,18 @@ export default function CategoryBreakdownTable({
                         colSpan={2}
                         className="px-3 py-2 text-center border-l border-gray-200"
                      >
-                        {MONTH_NAMES[m]}{' '}
-                        {selectedMonths === null ? '' : selectedYear}
+                        {MONTH_NAMES[m]} {selectedYear}
                      </th>
                   ))}
                </tr>
-               {/* Spent / Budget sub-header row */}
                <tr className="bg-gray-50 text-gray-500 uppercase text-xs tracking-wide">
                   {monthsToShow.map((m) => (
-                     <>
-                        <th
-                           key={`${m}-spent`}
-                           className="px-3 py-1 text-right border-l border-gray-200"
-                        >
+                     <Fragment key={m}>
+                        <th className="px-3 py-1 text-right border-l border-gray-200">
                            Spent
                         </th>
-                        <th
-                           key={`${m}-budget`}
-                           className="px-3 py-1 text-right"
-                        >
-                           Budget
-                        </th>
-                     </>
+                        <th className="px-3 py-1 text-right">Budget</th>
+                     </Fragment>
                   ))}
                </tr>
             </thead>
@@ -98,21 +87,17 @@ export default function CategoryBreakdownTable({
                         const isOver = budget > 0 && spent > budget;
 
                         return (
-                           <>
+                           <Fragment key={monthKey}>
                               <td
-                                 key={`${c.category}-${monthKey}-spent`}
                                  className={`px-3 py-2 text-right border-l border-gray-200 whitespace-nowrap font-medium
-                        ${isOver ? 'text-red-600' : spent > 0 ? 'text-gray-800' : 'text-gray-300'}`}
+                      ${isOver ? 'text-red-600' : spent > 0 ? 'text-gray-800' : 'text-gray-300'}`}
                               >
                                  {spent > 0 ? `${spent.toFixed(2)} €` : '-'}
                               </td>
-                              <td
-                                 key={`${c.category}-${monthKey}-budget`}
-                                 className="px-3 py-2 text-right whitespace-nowrap text-gray-500"
-                              >
+                              <td className="px-3 py-2 text-right whitespace-nowrap text-gray-500">
                                  {budget > 0 ? `${budget.toFixed(2)} €` : '-'}
                               </td>
-                           </>
+                           </Fragment>
                         );
                      })}
                   </tr>

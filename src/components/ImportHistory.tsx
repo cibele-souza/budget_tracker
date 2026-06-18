@@ -11,9 +11,14 @@ function formatDate(isoString: string): string {
 export default function ImportHistory({ imports }: ImportHistoryProps) {
    if (imports.length === 0) {
       return (
-         <p className="text-gray-400 text-sm text-center mt-6">
-            No imports yet. Upload a file above to get started.
-         </p>
+         <div className="w-full max-w-lg mx-auto mt-8 text-center">
+            <p className="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-1">
+               Import History
+            </p>
+            <p className="text-gray-400 text-sm">
+               No imports yet. Upload a file above to get started.
+            </p>
+         </div>
       );
    }
 

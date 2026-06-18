@@ -65,3 +65,17 @@ export function loadBudgets(): Budget[] {
 export function loadImports(): Import[] {
    return loadFromStorage<Import[]>(KEYS.imports, []);
 }
+
+// Reporting failures
+export function checkStorageHealth(): string | null {
+   try {
+      const keys = [KEYS.transactions, KEYS.budgets, KEYS.imports];
+      for (const key of keys) {
+         const raw = localStorage.getItem(key);
+         if (raw !== null) JSON.parse(raw); // will throw if corrupted
+      }
+      return null;
+   } catch {
+      return 'Some saved data could not be loaded and has been reset to default. Your file imports are unaffected.';
+   }
+}
