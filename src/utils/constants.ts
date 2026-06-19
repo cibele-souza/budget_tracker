@@ -25,7 +25,7 @@ export const MONTHS = [
    'SEP',
    'OCT',
    'NOV',
-   'DÉC',
+   'DEC',
 ];
 
 export type MonthName = (typeof MONTH_NAMES)[number];

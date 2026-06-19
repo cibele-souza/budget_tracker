@@ -30,11 +30,14 @@ export default function CategoryBreakdownTable({
 
    return (
       <div className="overflow-x-auto">
-         <table className="w-full text-sm border-collapse">
+         <table className="w-full text-sm border-separate border-spacing-0">
             <thead>
                <tr className="bg-my-bg-gray text-my-gray uppercase text-xs tracking-wide">
-                  <th className="px-3 py-2 text-left" rowSpan={2}>
-                     Category
+                  <th
+                     className="px-3 py-2 text-left sticky left-0 z-10 bg-my-bg-gray border-r border-b border-my-border-gray"
+                     rowSpan={2}
+                  >
+                     Categorie
                   </th>
                   {monthsToShow.map((m) => (
                      <th
@@ -49,10 +52,12 @@ export default function CategoryBreakdownTable({
                <tr className="bg-my-bg-light-gray text-my-gray uppercase text-xs tracking-wide">
                   {monthsToShow.map((m) => (
                      <Fragment key={m}>
-                        <th className="px-3 py-1 text-right border-l border-my-border-gray">
-                           Spent
+                        <th className="px-3 py-1 text-right border-l border-b border-my-border-gray">
+                           Depensé
                         </th>
-                        <th className="px-3 py-1 text-right">Budget</th>
+                        <th className="px-3 py-1 text-right border-b border-my-border-gray">
+                           Budget
+                        </th>
                      </Fragment>
                   ))}
                </tr>
@@ -63,7 +68,7 @@ export default function CategoryBreakdownTable({
                      key={c.category}
                      className="border-t border-my-border-gray hover:bg-my-bg-light-gray"
                   >
-                     <td className="px-3 py-2 font-medium text-my-gray whitespace-nowrap">
+                     <td className="px-3 py-2 font-medium text-my-gray whitespace-nowrap sticky left-0 z-10 bg-my-bg-gray border-r border-my-border-gray">
                         {c.category}
                      </td>
                      {monthsToShow.map((m) => {

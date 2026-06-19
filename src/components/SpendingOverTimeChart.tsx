@@ -63,7 +63,7 @@ export default function SpendingOverTimeChart({
    if (!hasData) {
       return (
          <div className="bg-white border border-my-border-gray rounded-xl p-6 shadow-sm flex items-center justify-center h-64 text-my-gray text-sm">
-            No data for the selected period.
+            Aucune donnée disponible pour la période sélectionnée.
          </div>
       );
    }
@@ -71,7 +71,7 @@ export default function SpendingOverTimeChart({
    return (
       <div className="bg-white border border-my-border-gray rounded-xl p-6 shadow-sm">
          <h2 className="text-sm font-medium text-my-gray uppercase tracking-wide mb-4">
-            Spending Over Time
+            Dépenses dans la période sélectionnée
          </h2>
          <ResponsiveContainer width="100%" height={300}>
             <BarChart

@@ -47,7 +47,7 @@ export default function CategoryBreakdownChart({
    if (data.length === 0) {
       return (
          <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm flex items-center justify-center h-64 text-my-gray text-sm">
-            No data for the selected period.
+            Aucune donnée disponible pour la période sélectionnée.
          </div>
       );
    }
@@ -58,7 +58,7 @@ export default function CategoryBreakdownChart({
    return (
       <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
          <h2 className="text-sm font-medium text-my-gray uppercase tracking-wide mb-4">
-            Spending by Category
+            Dépenses par Categorie
          </h2>
          <ResponsiveContainer width="100%" height={chartHeight}>
             <BarChart

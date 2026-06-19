@@ -24,7 +24,8 @@ export default function TransactionTable({
    if (transactions.length === 0) {
       return (
          <p className="text-my-gray text-sm text-center mt-6">
-            No transactions yet. Upload a file to get started.
+            Aucune transaction pour le moment. Veuillez télécharger un fichier
+            pour commencer.
          </p>
       );
    }
@@ -37,13 +38,13 @@ export default function TransactionTable({
                onClick={() => setShowBankCategory((prev) => !prev)}
                className="text-xs text-my-gray border border-my-border-gray rounded px-3 py-1 hover:bg-my-bg-gray transition-colors"
             >
-               {showBankCategory ? 'Hide' : 'Show'} bank category
+               {showBankCategory ? 'Masquer' : 'Afficher'} catégorie d'origine
             </button>
             <button
                onClick={() => setShowSourceFile((prev) => !prev)}
                className="text-xs text-my-gray border border-my-border-gray rounded px-3 py-1 hover:bg-my-bg-gray transition-colors"
             >
-               {showSourceFile ? 'Hide' : 'Show'} source file
+               {showSourceFile ? 'Masquer' : 'Afficher'} fichier d'origine
             </button>
          </div>
 
@@ -53,14 +54,14 @@ export default function TransactionTable({
                   <tr className="bg-my-bg-gray text-left text-my-gray uppercase text-xs tracking-wide">
                      <th className="px-2 py-2">Date</th>
                      <th className="px-2 py-2">Description</th>
-                     <th className="px-2 py-2 text-right">Amount</th>
+                     <th className="px-2 py-2 text-right">Montant</th>
                      {showBankCategory && (
-                        <th className="px-2 py-2">Bank Category</th>
+                        <th className="px-2 py-2">Catégorie d'origine</th>
                      )}
-                     <th className="px-2 py-2 text-center">Category</th>
-                     <th className="px-2 py-2">Bank</th>
+                     <th className="px-2 py-2 text-center">Catégorie</th>
+                     <th className="px-2 py-2">Banque</th>
                      {showSourceFile && (
-                        <th className="px-2 py-2">Source file</th>
+                        <th className="px-2 py-2">Fichier d'origine</th>
                      )}
                   </tr>
                </thead>

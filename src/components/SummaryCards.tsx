@@ -41,22 +41,22 @@ export default function SummaryCards({
    return (
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
          <Card
-            label="Total Spent"
+            label="Total des dépenses"
             value={`${totalSpent.toFixed(2)} €`}
             highlight="neutral"
          />
          <Card
-            label="Total Budget"
+            label="Budget total"
             value={`${totalBudget.toFixed(2)} €`}
             highlight="neutral"
          />
          <Card
-            label="Remaining"
+            label="Budget restant"
             value={`${remaining.toFixed(2)} €`}
             highlight={isOverall ? 'red' : 'green'}
          />
          <Card
-            label="Over-budget Categories"
+            label="Nb de catégories avec dépassement du budget"
             value={String(overBudgetCount)}
             highlight={overBudgetCount > 0 ? 'red' : 'green'}
          />

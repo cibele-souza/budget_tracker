@@ -4,7 +4,7 @@ const links = [
    { to: '/upload', label: 'Upload' },
    { to: '/transactions', label: 'Transactions' },
    { to: '/budget', label: 'Budget' },
-   { to: '/', label: 'Dashboard' },
+   { to: '/', label: 'Tableau de Bord' },
 ];
 
 export default function TopNav() {

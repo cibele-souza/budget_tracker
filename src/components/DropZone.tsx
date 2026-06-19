@@ -112,10 +112,10 @@ export default function DropZone({ onFileParsed }: DropZoneProps) {
                      </svg>
                   </div>
                   <p className="text-my-gray font-medium">
-                     Drop your bank export here
+                     Glissez lefichier exporté par la banque ici
                   </p>
                   <p className="text-gray-400 text-sm mt-1">
-                     or click to browse — CSV, XLS, XLSX
+                     ou cliquez pour parcourir vos dossiers — CSV, XLS, XLSX
                   </p>
                </>
             )}
