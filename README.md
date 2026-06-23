@@ -1,4 +1,4 @@
-# BudgetTrack
+# Budget Tracker
 
 A personal finance tracker built with React and TypeScript. Upload your bank exports, auto-classify transactions into categories, set monthly budgets, and visualize your spending on an interactive dashboard.
 
