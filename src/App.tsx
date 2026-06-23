@@ -1,11 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import TopNav from './components/TopNav';
+import DriveModal from './components/DriveModal';
 import UploadPage from './pages/UploadPage';
 import TransactionsPage from './pages/TransactionsPage';
 import BudgetPage from './pages/BudgetPage';
 import DashboardPage from './pages/DashboardPage';
-import type { Transaction, Import, Budget } from './types';
+import SettingsPage from './pages/SettingsPage';
+import type { Transaction, Import, Budget, BudgetTrackSnapshot } from './types';
 import {
    loadTransactions,
    loadBudgets,
@@ -15,13 +17,31 @@ import {
    saveImports,
    checkStorageHealth,
 } from './utils/storage';
+import {
+   isConnectedToDrive,
+   connectToDrive,
+   loadSnapshotFromDrive,
+   saveSnapshotToDrive,
+} from './utils/googleDrive';
+
+type DriveModalState =
+   | { case: 'notConnected' }
+   | { case: 'noFile' }
+   | { case: 'fileFound'; snapshot: BudgetTrackSnapshot }
+   | null;
 
 export default function App() {
    const [transactions, setTransactions] =
       useState<Transaction[]>(loadTransactions);
    const [budgets, setBudgets] = useState<Budget[]>(loadBudgets);
    const [imports, setImports] = useState<Import[]>(loadImports);
+   const [driveModalState, setDriveModalState] =
+      useState<DriveModalState>(null);
+   const [lastSyncedAt, setLastSyncedAt] = useState<string | null>(null);
 
+   const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+   // localStorage sync
    useEffect(() => {
       saveTransactions(transactions);
    }, [transactions]);
@@ -32,11 +52,88 @@ export default function App() {
       saveImports(imports);
    }, [imports]);
 
+   // Drive auto-save
+   const saveToDrive = useCallback(() => {
+      if (!isConnectedToDrive()) return;
+
+      if (debounceTimer.current) clearTimeout(debounceTimer.current);
+
+      debounceTimer.current = setTimeout(async () => {
+         try {
+            const snapshot: BudgetTrackSnapshot = {
+               meta: {
+                  schemaVersion: 1,
+                  source: 'budgettrack',
+                  exportedAt: new Date().toISOString(),
+                  counts: {
+                     transactions: transactions.length,
+                     budgets: budgets.length,
+                     imports: imports.length,
+                  },
+               },
+               data: { transactions, budgets, imports },
+            };
+            await saveSnapshotToDrive(snapshot);
+            setLastSyncedAt(new Date().toISOString());
+         } catch (err) {
+            console.error('Drive auto-save failed:', err);
+         }
+      }, 2000);
+   }, [transactions, budgets, imports]);
+
+   useEffect(() => {
+      saveToDrive();
+   }, [saveToDrive]);
+
+   // On app load: check Drive status
+   useEffect(() => {
+      if (!isConnectedToDrive()) {
+         setDriveModalState({ case: 'notConnected' });
+         return;
+      }
+      checkDriveForBackup();
+   }, []);
+
+   async function checkDriveForBackup() {
+      try {
+         const snapshot = await loadSnapshotFromDrive();
+         if (!snapshot) {
+            setDriveModalState({ case: 'noFile' });
+         } else {
+            setDriveModalState({ case: 'fileFound', snapshot });
+         }
+      } catch (err) {
+         console.error('Failed to check Drive for backup:', err);
+         setDriveModalState(null);
+      }
+   }
+
+   async function handleModalConnect() {
+      try {
+         await connectToDrive();
+         await checkDriveForBackup();
+      } catch (err) {
+         console.error('Failed to connect to Drive:', err);
+         setDriveModalState(null);
+      }
+   }
+
+   function handleRestore(snapshot: BudgetTrackSnapshot) {
+      setTransactions(snapshot.data.transactions);
+      setBudgets(snapshot.data.budgets);
+      setImports(snapshot.data.imports);
+   }
+
+   function handleLoadFromDrive(snapshot: BudgetTrackSnapshot) {
+      handleRestore(snapshot);
+      setDriveModalState(null);
+   }
+
    const storageError = checkStorageHealth();
 
    return (
       <BrowserRouter>
-         <div className="min-h-screen bg-gray-50">
+         <div className="min-h-screen bg-my-bg-light-gray">
             <TopNav />
             <main className="max-w-7xl mx-auto py-8 px-6">
                {storageError && (
@@ -89,8 +186,32 @@ export default function App() {
                         />
                      }
                   />
+                  <Route
+                     path="/settings"
+                     element={
+                        <SettingsPage
+                           transactions={transactions}
+                           budgets={budgets}
+                           imports={imports}
+                           onRestore={handleRestore}
+                           lastSyncedAt={lastSyncedAt}
+                           onManualSave={saveToDrive}
+                        />
+                     }
+                  />
                </Routes>
             </main>
+
+            {driveModalState && (
+               <DriveModal
+                  state={driveModalState}
+                  onConnect={handleModalConnect}
+                  onContinueLocally={() => setDriveModalState(null)}
+                  onLoadFromDrive={handleLoadFromDrive}
+                  onKeepLocal={() => setDriveModalState(null)}
+                  onDismiss={() => setDriveModalState(null)}
+               />
+            )}
          </div>
       </BrowserRouter>
    );

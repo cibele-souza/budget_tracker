@@ -11,7 +11,7 @@ export default function YearFilter({
 }: YearFilterProps) {
    return (
       <div className="flex items-center gap-2">
-         <label className="text-sm text-my-gray font-medium">Year</label>
+         <label className="text-sm text-my-gray font-medium">Année</label>
          <div className="relative">
             <select
                value={selectedYear}

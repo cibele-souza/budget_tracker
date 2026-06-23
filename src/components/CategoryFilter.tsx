@@ -17,12 +17,14 @@ export default function CategoryFilter({
       setIsOpen(false);
    }
 
-   const label = selectedCategory ?? 'All Categories';
+   const label = selectedCategory ?? 'Toutes les catégories';
 
    return (
       <div className="relative">
          <div className="flex items-center gap-2">
-            <label className="text-sm text-my-gray font-medium">Category</label>
+            <label className="text-sm text-my-gray font-medium">
+               Catégorie
+            </label>
             <button
                onClick={() => setIsOpen((prev) => !prev)}
                className="text-sm border border-my-border-gray rounded px-2 py-1 bg-white text-my-gray hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-my-blue min-w-36 text-left flex justify-between items-center gap-2"
@@ -41,7 +43,7 @@ export default function CategoryFilter({
                   onClick={() => handleSelect(null)}
                   className="w-full text-left px-3 py-1.5 text-xs text-my-gray hover:bg-my-bg-light-gray border-b border-my-border-gray"
                >
-                  All Categories
+                  Toutes les catégories
                </button>
 
                {/* Category list */}

@@ -32,7 +32,7 @@ export default function MonthFilter({
 
    const label =
       selectedMonths.length === 0
-         ? 'All months'
+         ? 'Tous les mois'
          : selectedMonths.length === 1
            ? MONTH_NAMES[selectedMonths[0] - 1]
            : `${selectedMonths.length} months`;
@@ -40,7 +40,7 @@ export default function MonthFilter({
    return (
       <div className="relative">
          <div className="flex items-center gap-2">
-            <label className="text-sm text-my-gray font-medium">Month</label>
+            <label className="text-sm text-my-gray font-medium">Mois</label>
             <button
                onClick={() => setIsOpen((prev) => !prev)}
                className="text-sm border border-my-border-gray rounded px-2 py-1 bg-white text-my-gray hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-my-blue min-w-32 text-left flex justify-between items-center gap-2"
@@ -59,7 +59,7 @@ export default function MonthFilter({
                   onClick={clearAll}
                   className="w-full text-left px-3 py-1.5 text-xs text-my-gray hover:bg-my-bg-light-gray border-b border-my-border-gray"
                >
-                  Clear (show all)
+                  Tous les mois
                </button>
 
                {/* Month checkboxes */}

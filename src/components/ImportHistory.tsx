@@ -25,7 +25,7 @@ export default function ImportHistory({ imports }: ImportHistoryProps) {
    return (
       <div className="w-full max-w-lg mx-auto mt-8">
          <h2 className="text-sm font-semibold text-my-gray uppercase tracking-wide mb-3">
-            Import History
+            Historique d'importation
          </h2>
          <ul className="space-y-2">
             {imports.map((imp) => (

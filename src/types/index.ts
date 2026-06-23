@@ -63,3 +63,21 @@ export interface Budget {
    defaultValue: number;
    monthlyOverrides: Record<string, number>; // e.g. { "2025-01": 1200 }
 }
+
+export interface BudgetTrackSnapshot {
+   meta: {
+      schemaVersion: number;
+      source: 'budgettrack';
+      exportedAt: string;
+      counts: {
+         transactions: number;
+         budgets: number;
+         imports: number;
+      };
+   };
+   data: {
+      transactions: Transaction[];
+      budgets: Budget[];
+      imports: Import[];
+   };
+}
