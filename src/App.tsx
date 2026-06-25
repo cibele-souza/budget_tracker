@@ -187,6 +187,10 @@ export default function App() {
       );
    }
 
+   function handleAddTransaction(transaction: Transaction) {
+      setTransactions((prev) => [transaction, ...prev]);
+   }
+
    return (
       <BrowserRouter>
          <div className="min-h-screen bg-my-bg-light-gray">
@@ -222,6 +226,7 @@ export default function App() {
                            onTransactionsChange={setTransactions}
                            onDeleteTransaction={handleDeleteTransaction}
                            onEditTransaction={handleEditTransaction}
+                           onAddTransaction={handleAddTransaction}
                            txYears={txYears}
                            txMonths={txMonths}
                            txCategories={txCategories}

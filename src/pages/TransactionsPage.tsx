@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import TransactionTable from '../components/TransactionTable';
 import TxYearFilter from '../components/TxYearFilter';
 import MonthFilter from '../components/MonthFilter';
@@ -11,6 +11,7 @@ interface TransactionsPageProps {
    onTransactionsChange: (updated: Transaction[]) => void;
    onDeleteTransaction: (id: string) => void;
    onEditTransaction: (id: string, updated: Partial<Transaction>) => void;
+   onAddTransaction: (transaction: Transaction) => void;
    txYears: string[];
    txMonths: number[];
    txCategories: Category[];
@@ -27,6 +28,7 @@ export default function TransactionsPage({
    onTransactionsChange,
    onDeleteTransaction,
    onEditTransaction,
+   onAddTransaction,
    txYears,
    txMonths,
    txCategories,
@@ -36,6 +38,8 @@ export default function TransactionsPage({
    onTxCategoriesChange,
    onTxSearchChange,
 }: TransactionsPageProps) {
+   const [isAddingNew, setIsAddingNew] = useState(false);
+
    const availableYears = useMemo(() => {
       const years = [...new Set(transactions.map((t) => t.date.slice(0, 4)))];
       return years.sort((a, b) => b.localeCompare(a));
@@ -123,12 +127,21 @@ export default function TransactionsPage({
             )}
          </div>
 
-         {/* Row count */}
-         <p className="text-xs text-my-gray mb-3">
-            Showing {filtered.length} of {transactions.length} transactions
-         </p>
+         {/* Row count + Add button */}
+         <div className="flex items-center justify-between mb-3">
+            <p className="text-xs text-my-gray">
+               Showing {filtered.length} of {transactions.length} transactions
+            </p>
+            <button
+               onClick={() => setIsAddingNew(true)}
+               className="px-3 py-1.5 bg-my-blue text-white text-sm rounded hover:opacity-90 transition-opacity"
+            >
+               + Add transaction
+            </button>
+         </div>
 
-         {transactions.length === 0 ? (
+         {/* Content */}
+         {transactions.length === 0 && !isAddingNew ? (
             <div className="flex flex-col items-center justify-center py-24 text-center">
                <svg
                   className="w-10 h-10 text-gray-300 mb-4"
@@ -151,7 +164,7 @@ export default function TransactionsPage({
                   Upload a bank export to get started.
                </p>
             </div>
-         ) : filtered.length === 0 ? (
+         ) : filtered.length === 0 && !isAddingNew ? (
             <p className="text-my-gray text-sm text-center mt-6">
                No transactions match the current filters.
             </p>
@@ -162,6 +175,12 @@ export default function TransactionsPage({
                onCategoryChange={handleCategoryChange}
                onDeleteTransaction={onDeleteTransaction}
                onEditTransaction={onEditTransaction}
+               onAddTransaction={(transaction) => {
+                  onAddTransaction(transaction);
+                  setIsAddingNew(false);
+               }}
+               onCancelAdd={() => setIsAddingNew(false)}
+               isAddingNew={isAddingNew}
             />
          )}
       </div>

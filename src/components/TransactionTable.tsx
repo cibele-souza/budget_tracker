@@ -8,6 +8,9 @@ interface Props {
    onCategoryChange: (id: string, newCategory: Category) => void;
    onDeleteTransaction: (id: string) => void;
    onEditTransaction: (id: string, updated: Partial<Transaction>) => void;
+   onAddTransaction: (transaction: Transaction) => void;
+   onCancelAdd: () => void;
+   isAddingNew: boolean;
 }
 
 interface EditDraft {
@@ -36,6 +39,9 @@ export default function TransactionTable({
    onCategoryChange,
    onDeleteTransaction,
    onEditTransaction,
+   onAddTransaction,
+   onCancelAdd,
+   isAddingNew,
 }: Props) {
    const [showBankCategory, setShowBankCategory] = useState(false);
    const [showSourceFile, setShowSourceFile] = useState(false);
@@ -48,10 +54,18 @@ export default function TransactionTable({
       imports.map((imp) => [imp.id, imp.filename]),
    );
 
+   // If another row is being edited, try to auto-save it first
    function startEdit(transaction: Transaction) {
-      // If another row is being edited, try to auto-save it first
+      if (isAddingNew) {
+         const errors = editDraft ? validateDraft(editDraft) : {};
+         if (Object.keys(errors).length > 0) {
+            setEditErrors(errors);
+            return;
+         }
+         onCancelAdd();
+      }
       if (editingId && editingId !== transaction.id) {
-         if (!trySaveCurrentEdit()) return; // block if invalid
+         if (!trySaveCurrentEdit()) return;
       }
       setPendingDeleteId(null);
       setEditingId(transaction.id);
@@ -139,6 +153,222 @@ export default function TransactionTable({
                   </tr>
                </thead>
                <tbody>
+                  {/* New row */}
+                  {isAddingNew && (
+                     <tr className="border-t border-my-border-gray bg-my-bg-light-gray">
+                        {/* Date */}
+                        <td className="px-2 py-1">
+                           <div className="flex flex-col">
+                              <input
+                                 type="date"
+                                 value={editDraft?.date ?? ''}
+                                 onChange={(e) => {
+                                    setEditDraft((d) =>
+                                       d
+                                          ? { ...d, date: e.target.value }
+                                          : {
+                                               date: e.target.value,
+                                               description: '',
+                                               amount: '',
+                                               category:
+                                                  'Non Classifié' as Category,
+                                            },
+                                    );
+                                    setEditErrors((err) => ({
+                                       ...err,
+                                       date: undefined,
+                                    }));
+                                 }}
+                                 className={`text-sm border rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-my-blue w-36 ${
+                                    editErrors.date
+                                       ? 'border-my-red'
+                                       : 'border-my-border-gray'
+                                 }`}
+                              />
+                              {editErrors.date && (
+                                 <span className="text-xs text-my-red mt-0.5">
+                                    {editErrors.date}
+                                 </span>
+                              )}
+                           </div>
+                        </td>
+                        {/* Description */}
+                        <td className="px-2 py-1">
+                           <input
+                              type="text"
+                              value={editDraft?.description ?? ''}
+                              onChange={(e) =>
+                                 setEditDraft((d) =>
+                                    d
+                                       ? { ...d, description: e.target.value }
+                                       : {
+                                            date: '',
+                                            description: e.target.value,
+                                            amount: '',
+                                            category:
+                                               'Non Classifié' as Category,
+                                         },
+                                 )
+                              }
+                              placeholder="Description"
+                              className="text-sm border border-my-border-gray rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-my-blue w-full"
+                           />
+                        </td>
+                        {/* Amount */}
+                        <td className="px-2 py-1">
+                           <div className="flex flex-col items-end">
+                              <input
+                                 type="number"
+                                 value={editDraft?.amount ?? ''}
+                                 onChange={(e) => {
+                                    setEditDraft((d) =>
+                                       d
+                                          ? { ...d, amount: e.target.value }
+                                          : {
+                                               date: '',
+                                               description: '',
+                                               amount: e.target.value,
+                                               category:
+                                                  'Non Classifié' as Category,
+                                            },
+                                    );
+                                    setEditErrors((err) => ({
+                                       ...err,
+                                       amount: undefined,
+                                    }));
+                                 }}
+                                 placeholder="0.00"
+                                 className={`text-sm border rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-my-blue w-28 text-right ${
+                                    editErrors.amount
+                                       ? 'border-my-red'
+                                       : 'border-my-border-gray'
+                                 }`}
+                              />
+                              {editErrors.amount && (
+                                 <span className="text-xs text-my-red mt-0.5">
+                                    {editErrors.amount}
+                                 </span>
+                              )}
+                           </div>
+                        </td>
+                        {/* Bank category — empty for manual */}
+                        {showBankCategory && (
+                           <td className="px-2 py-1 text-my-gray">—</td>
+                        )}
+                        {/* Category */}
+                        <td className="px-2 py-1 text-center">
+                           <select
+                              value={editDraft?.category ?? 'Non Classifié'}
+                              onChange={(e) =>
+                                 setEditDraft((d) =>
+                                    d
+                                       ? {
+                                            ...d,
+                                            category: e.target
+                                               .value as Category,
+                                         }
+                                       : {
+                                            date: '',
+                                            description: '',
+                                            amount: '',
+                                            category: e.target
+                                               .value as Category,
+                                         },
+                                 )
+                              }
+                              className="text-sm border border-my-border-gray rounded px-2 py-1 bg-white text-my-gray focus:outline-none focus:ring-2 focus:ring-my-blue"
+                           >
+                              {CATEGORIES.map((cat) => (
+                                 <option key={cat} value={cat}>
+                                    {cat}
+                                 </option>
+                              ))}
+                           </select>
+                        </td>
+                        {/* Bank name — empty for manual */}
+                        <td className="px-2 py-1 text-my-gray">—</td>
+                        {/* Source file — empty for manual */}
+                        {showSourceFile && (
+                           <td className="px-2 py-1 text-my-gray text-xs">—</td>
+                        )}
+                        {/* Actions */}
+                        <td className="px-2 py-1 whitespace-nowrap">
+                           <div className="flex items-center justify-end gap-1">
+                              {/* Save */}
+                              <button
+                                 onClick={() => {
+                                    const draft = editDraft ?? {
+                                       date: '',
+                                       description: '',
+                                       amount: '',
+                                       category: 'Non Classifié' as Category,
+                                    };
+                                    const errors = validateDraft(draft);
+                                    if (Object.keys(errors).length > 0) {
+                                       setEditErrors(errors);
+                                       return;
+                                    }
+                                    onAddTransaction({
+                                       id: crypto.randomUUID(),
+                                       date: draft.date,
+                                       description: draft.description,
+                                       amount: parseFloat(draft.amount),
+                                       category: draft.category,
+                                       importId: 'manual',
+                                       bankName: '',
+                                       bankCategory: '',
+                                    });
+                                    setEditDraft(null);
+                                    setEditErrors({});
+                                 }}
+                                 className="text-my-green hover:opacity-70 transition-opacity p-1 rounded"
+                                 title="Save"
+                              >
+                                 <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    className="w-4 h-4"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    strokeWidth={2}
+                                    stroke="currentColor"
+                                 >
+                                    <path
+                                       strokeLinecap="round"
+                                       strokeLinejoin="round"
+                                       d="M4.5 12.75l6 6 9-13.5"
+                                    />
+                                 </svg>
+                              </button>
+                              {/* Cancel */}
+                              <button
+                                 onClick={() => {
+                                    setEditDraft(null);
+                                    setEditErrors({});
+                                    onCancelAdd();
+                                 }}
+                                 className="text-my-gray hover:text-my-red transition-colors p-1 rounded"
+                                 title="Cancel"
+                              >
+                                 <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    className="w-4 h-4"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    strokeWidth={2}
+                                    stroke="currentColor"
+                                 >
+                                    <path
+                                       strokeLinecap="round"
+                                       strokeLinejoin="round"
+                                       d="M6 18L18 6M6 6l12 12"
+                                    />
+                                 </svg>
+                              </button>
+                           </div>
+                        </td>
+                     </tr>
+                  )}
+
                   {transactions.map((transaction) => {
                      const isEditing = editingId === transaction.id;
                      const isDeleting = pendingDeleteId === transaction.id;
