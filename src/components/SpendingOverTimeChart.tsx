@@ -17,7 +17,7 @@ interface SpendingOverTimeChartProps {
    budgets: Budget[];
    selectedYear: number;
    selectedMonths: number[]; // empty = all months
-   selectedCategory: string | null;
+   selectedCategories: string[];
 }
 
 export default function SpendingOverTimeChart({
@@ -25,7 +25,7 @@ export default function SpendingOverTimeChart({
    budgets,
    selectedYear,
    selectedMonths,
-   selectedCategory,
+   selectedCategories,
 }: SpendingOverTimeChartProps) {
    const monthsToShow =
       selectedMonths.length > 0
@@ -40,15 +40,15 @@ export default function SpendingOverTimeChart({
       let spent = 0;
       let budget = 0;
 
-      if (selectedCategory !== null) {
-         const row = summary.categories.find(
-            (c) => c.category === selectedCategory,
-         );
-         spent = row ? row.spent : 0;
-         budget = row ? row.budget : 0;
-      } else {
+      if (selectedCategories.length === 0) {
          spent = summary.totalSpent;
          budget = summary.totalBudget;
+      } else {
+         const rows = summary.categories.filter((c) =>
+            selectedCategories.includes(c.category),
+         );
+         spent = rows.reduce((sum, c) => sum + c.spent, 0);
+         budget = rows.reduce((sum, c) => sum + c.budget, 0);
       }
 
       return {

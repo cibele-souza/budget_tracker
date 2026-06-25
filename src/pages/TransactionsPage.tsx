@@ -1,17 +1,66 @@
+import { useMemo } from 'react';
 import TransactionTable from '../components/TransactionTable';
+import TxYearFilter from '../components/TxYearFilter';
+import MonthFilter from '../components/MonthFilter';
+import CategoryFilter from '../components/CategoryFilter';
 import type { Transaction, Category, Import } from '../types';
 
 interface TransactionsPageProps {
    transactions: Transaction[];
    imports: Import[];
    onTransactionsChange: (updated: Transaction[]) => void;
+   onDeleteTransaction: (id: string) => void;
+   onEditTransaction: (id: string, updated: Partial<Transaction>) => void;
+   txYears: string[];
+   txMonths: number[];
+   txCategories: Category[];
+   txSearch: string;
+   onTxYearsChange: (years: string[]) => void;
+   onTxMonthsChange: (months: number[]) => void;
+   onTxCategoriesChange: (categories: Category[]) => void;
+   onTxSearchChange: (search: string) => void;
 }
 
 export default function TransactionsPage({
    transactions,
    imports,
    onTransactionsChange,
+   onDeleteTransaction,
+   onEditTransaction,
+   txYears,
+   txMonths,
+   txCategories,
+   txSearch,
+   onTxYearsChange,
+   onTxMonthsChange,
+   onTxCategoriesChange,
+   onTxSearchChange,
 }: TransactionsPageProps) {
+   const availableYears = useMemo(() => {
+      const years = [...new Set(transactions.map((t) => t.date.slice(0, 4)))];
+      return years.sort((a, b) => b.localeCompare(a));
+   }, [transactions]);
+
+   const filtered = useMemo(() => {
+      return transactions.filter((t) => {
+         if (txYears.length > 0 && !txYears.includes(t.date.slice(0, 4)))
+            return false;
+         if (
+            txMonths.length > 0 &&
+            !txMonths.includes(parseInt(t.date.slice(5, 7)))
+         )
+            return false;
+         if (txCategories.length > 0 && !txCategories.includes(t.category))
+            return false;
+         if (
+            txSearch &&
+            !t.description.toLowerCase().includes(txSearch.toLowerCase())
+         )
+            return false;
+         return true;
+      });
+   }, [transactions, txYears, txMonths, txCategories, txSearch]);
+
    function handleCategoryChange(id: string, newCategory: Category) {
       onTransactionsChange(
          transactions.map((t) =>
@@ -20,9 +69,65 @@ export default function TransactionsPage({
       );
    }
 
+   function handleReset() {
+      onTxYearsChange([]);
+      onTxMonthsChange([]);
+      onTxCategoriesChange([]);
+      onTxSearchChange('');
+   }
+
+   const hasActiveFilters =
+      txYears.length > 0 ||
+      txMonths.length > 0 ||
+      txCategories.length > 0 ||
+      txSearch !== '';
+
    return (
-      <div className="overflow-hidden">
+      <div className="overflow-visible">
          <h1 className="text-2xl font-semibold mb-6">Transactions</h1>
+
+         {/* Filters */}
+         <div className="flex flex-wrap gap-3 mb-4 items-end">
+            <TxYearFilter
+               years={availableYears}
+               selectedYears={txYears}
+               onChange={onTxYearsChange}
+            />
+            <MonthFilter
+               selectedMonths={txMonths}
+               onMonthsChange={onTxMonthsChange}
+            />
+            <CategoryFilter
+               selectedCategories={txCategories}
+               onChange={onTxCategoriesChange}
+            />
+            <div className="flex flex-col gap-1">
+               <label className="text-sm text-my-gray font-medium">
+                  Search
+               </label>
+               <input
+                  type="text"
+                  value={txSearch}
+                  onChange={(e) => onTxSearchChange(e.target.value)}
+                  placeholder="Search description..."
+                  className="text-sm border border-my-border-gray rounded px-2 py-1 bg-white text-my-gray focus:outline-none focus:ring-2 focus:ring-my-blue w-52"
+               />
+            </div>
+            {hasActiveFilters && (
+               <button
+                  onClick={handleReset}
+                  className="text-sm text-my-gray border border-my-border-gray rounded px-3 py-1.5 hover:border-my-red hover:text-my-red transition-colors self-end"
+               >
+                  Reset filters
+               </button>
+            )}
+         </div>
+
+         {/* Row count */}
+         <p className="text-xs text-my-gray mb-3">
+            Showing {filtered.length} of {transactions.length} transactions
+         </p>
+
          {transactions.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-24 text-center">
                <svg
@@ -46,11 +151,17 @@ export default function TransactionsPage({
                   Upload a bank export to get started.
                </p>
             </div>
+         ) : filtered.length === 0 ? (
+            <p className="text-my-gray text-sm text-center mt-6">
+               No transactions match the current filters.
+            </p>
          ) : (
             <TransactionTable
-               transactions={transactions}
+               transactions={filtered}
                imports={imports}
                onCategoryChange={handleCategoryChange}
+               onDeleteTransaction={onDeleteTransaction}
+               onEditTransaction={onEditTransaction}
             />
          )}
       </div>

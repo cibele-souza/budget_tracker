@@ -1,23 +1,23 @@
 import { useState } from 'react';
-import { CATEGORIES } from '../types/index';
-import type { Category } from '../types/index';
 
-interface CategoryFilterProps {
-   selectedCategories: Category[];
-   onChange: (categories: Category[]) => void;
+interface TxYearFilterProps {
+   years: string[];
+   selectedYears: string[];
+   onChange: (years: string[]) => void;
 }
 
-export default function CategoryFilter({
-   selectedCategories,
+export default function TxYearFilter({
+   years,
+   selectedYears,
    onChange,
-}: CategoryFilterProps) {
+}: TxYearFilterProps) {
    const [isOpen, setIsOpen] = useState(false);
 
-   function toggleCategory(cat: Category) {
-      if (selectedCategories.includes(cat)) {
-         onChange(selectedCategories.filter((c) => c !== cat));
+   function toggleYear(year: string) {
+      if (selectedYears.includes(year)) {
+         onChange(selectedYears.filter((y) => y !== year));
       } else {
-         onChange([...selectedCategories, cat]);
+         onChange([...selectedYears, year].sort((a, b) => b.localeCompare(a)));
       }
    }
 
@@ -27,21 +27,19 @@ export default function CategoryFilter({
    }
 
    const label =
-      selectedCategories.length === 0
-         ? 'Toutes les catégories'
-         : selectedCategories.length === 1
-           ? selectedCategories[0]
-           : `${selectedCategories.length} catégories`;
+      selectedYears.length === 0
+         ? 'All years'
+         : selectedYears.length === 1
+           ? selectedYears[0]
+           : `${selectedYears.length} years`;
 
    return (
       <div className="relative">
          <div className="flex items-center gap-2">
-            <label className="text-sm text-my-gray font-medium">
-               Catégorie
-            </label>
+            <label className="text-sm text-my-gray font-medium">Year</label>
             <button
                onClick={() => setIsOpen((prev) => !prev)}
-               className="text-sm border border-my-border-gray rounded px-2 py-1 bg-white text-my-gray hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-my-blue min-w-40 text-left flex justify-between items-center gap-2"
+               className="text-sm border border-my-border-gray rounded px-2 py-1 bg-white text-my-gray hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-my-blue text-left flex justify-between items-center gap-2 min-w-24"
             >
                <span>{label}</span>
                <span className="text-my-gray text-xs">
@@ -51,27 +49,27 @@ export default function CategoryFilter({
          </div>
 
          {isOpen && (
-            <div className="absolute right-0 mt-1 bg-white border border-my-border-gray rounded-lg shadow-lg z-20 min-w-40 py-1 max-h-72 overflow-y-auto">
+            <div className="absolute right-0 mt-1 bg-white border border-my-border-gray rounded-lg shadow-lg z-20 min-w-24 py-1 max-h-72 overflow-y-auto content-end">
                <button
                   onClick={clearAll}
                   className="w-full text-left px-3 py-1.5 text-xs text-my-gray hover:bg-my-bg-light-gray border-b border-my-border-gray"
                >
-                  Toutes les catégories
+                  All years
                </button>
-               {CATEGORIES.map((cat) => {
-                  const checked = selectedCategories.includes(cat);
+               {years.map((year) => {
+                  const checked = selectedYears.includes(year);
                   return (
                      <label
-                        key={cat}
+                        key={year}
                         className="flex items-center gap-2 px-3 py-1.5 text-sm text-my-gray hover:bg-my-bg-light-gray cursor-pointer"
                      >
                         <input
                            type="checkbox"
                            checked={checked}
-                           onChange={() => toggleCategory(cat)}
+                           onChange={() => toggleYear(year)}
                            className="accent-my-blue"
                         />
-                        {cat}
+                        {year}
                      </label>
                   );
                })}

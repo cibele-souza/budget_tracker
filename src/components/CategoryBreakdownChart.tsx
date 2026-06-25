@@ -16,7 +16,7 @@ interface CategoryBreakdownChartProps {
    budgets: Budget[];
    selectedYear: number;
    selectedMonths: number[]; // empty = all months
-   selectedCategory: string | null;
+   selectedCategories: string[];
 }
 
 export default function CategoryBreakdownChart({
@@ -24,7 +24,7 @@ export default function CategoryBreakdownChart({
    budgets,
    selectedYear,
    selectedMonths,
-   selectedCategory,
+   selectedCategories,
 }: CategoryBreakdownChartProps) {
    const summary = aggregatePeriod(
       transactions,
@@ -35,7 +35,9 @@ export default function CategoryBreakdownChart({
 
    const data = summary.categories
       .filter(
-         (c) => selectedCategory === null || c.category === selectedCategory,
+         (c) =>
+            selectedCategories.length === 0 ||
+            selectedCategories.includes(c.category),
       )
       .filter((c) => c.spent > 0 || c.budget > 0)
       .map((c) => ({

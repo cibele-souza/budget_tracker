@@ -42,6 +42,7 @@ export interface Transaction {
    bankCategory: string; // raw category string from the bank file
    bankName: string; // e.g. "BoursoBank", "Hello Bank"
    importId: string;
+   edited?: boolean;
 }
 
 // ── Import ───────────────────────────────────────────────────────────────────

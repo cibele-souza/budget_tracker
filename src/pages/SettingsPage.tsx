@@ -18,7 +18,7 @@ interface SettingsPageProps {
    imports: Import[];
    onRestore: (snapshot: BudgetTrackSnapshot) => void;
    lastSyncedAt: string | null;
-   onManualSave: () => void;
+   onManualSave: () => Promise<void>;
 }
 
 type ImportState =
@@ -41,6 +41,7 @@ export default function SettingsPage({
    });
    const [driveConnected, setDriveConnected] = useState(isConnectedToDrive());
    const [driveError, setDriveError] = useState<string | null>(null);
+   const [driveSaveSuccess, setDriveSaveSuccess] = useState(false);
 
    const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -99,6 +100,21 @@ export default function SettingsPage({
       setDriveConnected(false);
    }
 
+   async function handleManualSave() {
+      setDriveError(null);
+      try {
+         await onManualSave();
+         setDriveSaveSuccess(true);
+         setTimeout(() => setDriveSaveSuccess(false), 3000);
+      } catch (err) {
+         setDriveError(
+            err instanceof Error
+               ? err.message
+               : 'Échec de la sauvegarde sur Google Drive.',
+         );
+      }
+   }
+
    return (
       <div className="max-w-2xl mx-auto px-4 py-8">
          <h1 className="text-2xl font-semibold mb-8">Configurations</h1>
@@ -125,7 +141,7 @@ export default function SettingsPage({
                   )}
                   <div className="flex gap-3">
                      <button
-                        onClick={onManualSave}
+                        onClick={handleManualSave}
                         className="px-4 py-2 bg-gray-600 opacity-80 text-white rounded hover:opacity-100 transition-opacity text-sm"
                      >
                         Sauvegarder to Google Drive
@@ -136,6 +152,11 @@ export default function SettingsPage({
                      >
                         Déconnecter
                      </button>
+                     {driveSaveSuccess && (
+                        <p className="mt-3 text-sm text-my-green">
+                           ✓ Sauvegarde réussie.
+                        </p>
+                     )}
                   </div>
                </div>
             ) : (

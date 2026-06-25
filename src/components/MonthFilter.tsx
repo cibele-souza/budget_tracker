@@ -53,7 +53,7 @@ export default function MonthFilter({
          </div>
 
          {isOpen && (
-            <div className="absolute right-0 mt-1 bg-white border border-my-border-gray rounded-lg shadow-lg z-10 min-w-40 py-1">
+            <div className="absolute right-0 mt-1 bg-white border border-my-border-gray rounded-lg shadow-lg z-20 min-w-32 py-1 max-h-72 overflow-y-auto">
                {/* Clear button */}
                <button
                   onClick={clearAll}
@@ -69,12 +69,16 @@ export default function MonthFilter({
                   return (
                      <label
                         key={month}
+                        onClick={(e) => e.stopPropagation()}
                         className="flex items-center gap-2 px-3 py-1.5 text-sm text-my-gray hover:bg-my-bg-light-gray cursor-pointer"
                      >
                         <input
                            type="checkbox"
                            checked={checked}
-                           onChange={() => toggleMonth(month)}
+                           onChange={(e) => {
+                              e.stopPropagation();
+                              toggleMonth(month);
+                           }}
                            className="accent-my-blue"
                         />
                         {name}
@@ -87,7 +91,7 @@ export default function MonthFilter({
          {/* Click outside to close */}
          {isOpen && (
             <div
-               className="fixed inset-0 z-0"
+               className="fixed inset-0 z-10"
                onClick={() => setIsOpen(false)}
             />
          )}

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import type { Transaction, Budget } from '../types';
+import type { Transaction, Budget, Category } from '../types';
 import { getAvailableYears } from '../utils/dates';
 import { aggregatePeriod } from '../utils/aggregate';
 import YearFilter from '../components/YearFilter';
@@ -25,9 +25,7 @@ export default function DashboardPage({
       years.includes(currentYear) ? currentYear : years[years.length - 1],
    );
    const [selectedMonths, setSelectedMonths] = useState<number[]>([]);
-   const [selectedCategory, setSelectedCategory] = useState<string | null>(
-      null,
-   );
+   const [selectedCategories, setSelectedCategories] = useState<Category[]>([]);
 
    function handleYearChange(year: number) {
       setSelectedYear(year);
@@ -42,20 +40,21 @@ export default function DashboardPage({
    );
 
    const filteredSummary =
-      selectedCategory !== null
+      selectedCategories.length > 0
          ? {
               ...summary,
-              categories: summary.categories.filter(
-                 (c) => c.category === selectedCategory,
+              categories: summary.categories.filter((c) =>
+                 selectedCategories.includes(c.category),
               ),
               totalSpent: summary.categories
-                 .filter((c) => c.category === selectedCategory)
+                 .filter((c) => selectedCategories.includes(c.category))
                  .reduce((sum, c) => sum + c.spent, 0),
               totalBudget: summary.categories
-                 .filter((c) => c.category === selectedCategory)
+                 .filter((c) => selectedCategories.includes(c.category))
                  .reduce((sum, c) => sum + c.budget, 0),
               overBudgetCount: summary.categories.filter(
-                 (c) => c.category === selectedCategory && c.isOverBudget,
+                 (c) =>
+                    selectedCategories.includes(c.category) && c.isOverBudget,
               ).length,
            }
          : summary;
@@ -77,8 +76,8 @@ export default function DashboardPage({
                   onMonthsChange={setSelectedMonths}
                />
                <CategoryFilter
-                  selectedCategory={selectedCategory}
-                  onChange={setSelectedCategory}
+                  selectedCategories={selectedCategories}
+                  onChange={setSelectedCategories}
                />
             </div>
          </div>
@@ -101,14 +100,14 @@ export default function DashboardPage({
                   budgets={budgets}
                   selectedYear={selectedYear}
                   selectedMonths={selectedMonths}
-                  selectedCategory={selectedCategory}
+                  selectedCategories={selectedCategories}
                />
                <CategoryBreakdownChart
                   transactions={transactions}
                   budgets={budgets}
                   selectedYear={selectedYear}
                   selectedMonths={selectedMonths}
-                  selectedCategory={selectedCategory}
+                  selectedCategories={selectedCategories}
                />
             </div>
          ) : (

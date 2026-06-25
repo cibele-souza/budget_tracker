@@ -7,7 +7,13 @@ import TransactionsPage from './pages/TransactionsPage';
 import BudgetPage from './pages/BudgetPage';
 import DashboardPage from './pages/DashboardPage';
 import SettingsPage from './pages/SettingsPage';
-import type { Transaction, Import, Budget, BudgetTrackSnapshot } from './types';
+import type {
+   Transaction,
+   Import,
+   Budget,
+   BudgetTrackSnapshot,
+   Category,
+} from './types';
 import {
    loadTransactions,
    loadBudgets,
@@ -38,6 +44,10 @@ export default function App() {
    const [driveModalState, setDriveModalState] =
       useState<DriveModalState>(null);
    const [lastSyncedAt, setLastSyncedAt] = useState<string | null>(null);
+   const [txYears, setTxYears] = useState<string[]>([]);
+   const [txMonths, setTxMonths] = useState<number[]>([]);
+   const [txCategories, setTxCategories] = useState<Category[]>([]);
+   const [txSearch, setTxSearch] = useState('');
 
    const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -131,6 +141,52 @@ export default function App() {
 
    const storageError = checkStorageHealth();
 
+   async function handleManualSave(): Promise<void> {
+      const snapshot: BudgetTrackSnapshot = {
+         meta: {
+            schemaVersion: 1,
+            source: 'budgettrack',
+            exportedAt: new Date().toISOString(),
+            counts: {
+               transactions: transactions.length,
+               budgets: budgets.length,
+               imports: imports.length,
+            },
+         },
+         data: { transactions, budgets, imports },
+      };
+      await saveSnapshotToDrive(snapshot);
+      setLastSyncedAt(new Date().toISOString());
+   }
+
+   function handleDeleteTransaction(id: string) {
+      const transaction = transactions.find((t) => t.id === id);
+      if (!transaction) return;
+
+      setTransactions((prev) => prev.filter((t) => t.id !== id));
+
+      if (transaction.importId !== 'manual') {
+         setImports((prev) =>
+            prev.map((imp) =>
+               imp.id === transaction.importId
+                  ? {
+                       ...imp,
+                       transactionCount: Math.max(0, imp.transactionCount - 1),
+                    }
+                  : imp,
+            ),
+         );
+      }
+   }
+
+   function handleEditTransaction(id: string, updated: Partial<Transaction>) {
+      setTransactions((prev) =>
+         prev.map((t) =>
+            t.id === id ? { ...t, ...updated, edited: true } : t,
+         ),
+      );
+   }
+
    return (
       <BrowserRouter>
          <div className="min-h-screen bg-my-bg-light-gray">
@@ -164,6 +220,16 @@ export default function App() {
                            transactions={transactions}
                            imports={imports}
                            onTransactionsChange={setTransactions}
+                           onDeleteTransaction={handleDeleteTransaction}
+                           onEditTransaction={handleEditTransaction}
+                           txYears={txYears}
+                           txMonths={txMonths}
+                           txCategories={txCategories}
+                           txSearch={txSearch}
+                           onTxYearsChange={setTxYears}
+                           onTxMonthsChange={setTxMonths}
+                           onTxCategoriesChange={setTxCategories}
+                           onTxSearchChange={setTxSearch}
                         />
                      }
                   />
@@ -195,7 +261,7 @@ export default function App() {
                            imports={imports}
                            onRestore={handleRestore}
                            lastSyncedAt={lastSyncedAt}
-                           onManualSave={saveToDrive}
+                           onManualSave={handleManualSave}
                         />
                      }
                   />
