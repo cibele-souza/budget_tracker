@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { CATEGORIES } from '../types';
 import type { Category, ClassificationRule } from '../types';
 import { DEFAULT_RULES } from '../utils/classificationRules';
@@ -19,6 +19,9 @@ interface RuleDraft {
 interface RuleErrors {
    keyword?: string;
 }
+
+type SortColumn = 'matchField' | 'keyword' | 'category' | 'isDefault';
+type SortDirection = 'asc' | 'desc';
 
 function validateRuleDraft(draft: RuleDraft): RuleErrors {
    const errors: RuleErrors = {};
@@ -43,8 +46,38 @@ export default function RulesManager({
    });
    const [newErrors, setNewErrors] = useState<RuleErrors>({});
    const [showUnsavedModal, setShowUnsavedModal] = useState(false);
+   const [sortColumn, setSortColumn] = useState<SortColumn>('matchField');
+   const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
 
    const hasChanges = JSON.stringify(draft) !== JSON.stringify(rules);
+
+   // -- Sort handler ---------------
+   function handleSortClick(column: SortColumn) {
+      if (sortColumn === column) {
+         setSortDirection((d) => (d === 'asc' ? 'desc' : 'asc'));
+      } else {
+         setSortColumn(column);
+         setSortDirection('asc');
+      }
+   }
+
+   const sortedDraft = useMemo(() => {
+      return [...draft].sort((a, b) => {
+         let aVal: string;
+         let bVal: string;
+
+         if (sortColumn === 'isDefault') {
+            aVal = a.isDefault ? '0' : '1'; // defaults first when asc
+            bVal = b.isDefault ? '0' : '1';
+         } else {
+            aVal = a[sortColumn].toLowerCase();
+            bVal = b[sortColumn].toLowerCase();
+         }
+
+         const cmp = aVal.localeCompare(bVal);
+         return sortDirection === 'asc' ? cmp : -cmp;
+      });
+   }, [draft, sortColumn, sortDirection]);
 
    // ── Edit helpers ──────────────────────────────────────────────────────────
 
@@ -267,10 +300,37 @@ export default function RulesManager({
             <table className="w-full text-sm border-collapse">
                <thead>
                   <tr className="bg-my-bg-gray text-left text-my-gray uppercase text-xs tracking-wide">
-                     <th className="px-2 py-2">Match field</th>
-                     <th className="px-2 py-2">Keyword</th>
-                     <th className="px-2 py-2">Category</th>
-                     <th className="px-2 py-2 text-center">Default</th>
+                     {(
+                        [
+                           'matchField',
+                           'keyword',
+                           'category',
+                           'isDefault',
+                        ] as SortColumn[]
+                     ).map((col) => (
+                        <th
+                           key={col}
+                           className={`px-2 py-2 ${col === 'isDefault' ? 'text-center' : ''} cursor-pointer select-none hover:text-gray-700`}
+                           onClick={() => handleSortClick(col)}
+                        >
+                           <span className="inline-flex items-center gap-1">
+                              {col === 'matchField'
+                                 ? 'Match field'
+                                 : col === 'keyword'
+                                   ? 'Keyword'
+                                   : col === 'category'
+                                     ? 'Category'
+                                     : 'Default'}
+                              <span className="text-my-gray">
+                                 {sortColumn === col
+                                    ? sortDirection === 'asc'
+                                       ? '↑'
+                                       : '↓'
+                                    : '↕'}
+                              </span>
+                           </span>
+                        </th>
+                     ))}
                      <th className="px-2 py-2"></th>
                   </tr>
                </thead>
@@ -394,7 +454,7 @@ export default function RulesManager({
                   )}
 
                   {/* Existing rows */}
-                  {draft.map((rule) => {
+                  {sortedDraft.map((rule) => {
                      const isEditing = editingId === rule.id;
 
                      if (isEditing && editDraft) {
