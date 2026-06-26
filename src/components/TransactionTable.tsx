@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { CATEGORIES } from '../types';
 import type { Transaction, Category, Import } from '../types';
 
@@ -50,6 +50,18 @@ export default function TransactionTable({
    const [editDraft, setEditDraft] = useState<EditDraft | null>(null);
    const [editErrors, setEditErrors] = useState<EditErrors>({});
 
+   useEffect(() => {
+      if (isAddingNew) {
+         setEditDraft({
+            date: '',
+            description: '',
+            amount: '',
+            category: 'Non classé',
+         });
+         setEditErrors({});
+      }
+   }, [isAddingNew]);
+
    const importMap = Object.fromEntries(
       imports.map((imp) => [imp.id, imp.filename]),
    );
@@ -57,16 +69,35 @@ export default function TransactionTable({
    // If another row is being edited, try to auto-save it first
    function startEdit(transaction: Transaction) {
       if (isAddingNew) {
-         const errors = editDraft ? validateDraft(editDraft) : {};
-         if (Object.keys(errors).length > 0) {
-            setEditErrors(errors);
-            return;
+         if (editDraft && (editDraft.date || editDraft.amount)) {
+            // Draft has data — validate and try to save
+            const errors = validateDraft(editDraft);
+            if (Object.keys(errors).length > 0) {
+               setEditErrors(errors);
+               return;
+            }
+            // Valid — save the new row
+            onAddTransaction({
+               id: crypto.randomUUID(),
+               date: editDraft.date,
+               description: editDraft.description,
+               amount: parseFloat(editDraft.amount),
+               category: editDraft.category,
+               importId: 'manual',
+               bankName: '',
+               bankCategory: '',
+            });
          }
+         // Whether saved or empty — close the new row
+         setEditDraft(null);
+         setEditErrors({});
          onCancelAdd();
       }
+
       if (editingId && editingId !== transaction.id) {
          if (!trySaveCurrentEdit()) return;
       }
+
       setPendingDeleteId(null);
       setEditingId(transaction.id);
       setEditDraft({
@@ -154,25 +185,18 @@ export default function TransactionTable({
                </thead>
                <tbody>
                   {/* New row */}
-                  {isAddingNew && (
+                  {/* New row */}
+                  {isAddingNew && editDraft && (
                      <tr className="border-t border-my-border-gray bg-my-bg-light-gray">
                         {/* Date */}
                         <td className="px-2 py-1">
                            <div className="flex flex-col">
                               <input
                                  type="date"
-                                 value={editDraft?.date ?? ''}
+                                 value={editDraft.date}
                                  onChange={(e) => {
                                     setEditDraft((d) =>
-                                       d
-                                          ? { ...d, date: e.target.value }
-                                          : {
-                                               date: e.target.value,
-                                               description: '',
-                                               amount: '',
-                                               category:
-                                                  'Non Classifié' as Category,
-                                            },
+                                       d ? { ...d, date: e.target.value } : d,
                                     );
                                     setEditErrors((err) => ({
                                        ...err,
@@ -196,18 +220,12 @@ export default function TransactionTable({
                         <td className="px-2 py-1">
                            <input
                               type="text"
-                              value={editDraft?.description ?? ''}
+                              value={editDraft.description}
                               onChange={(e) =>
                                  setEditDraft((d) =>
                                     d
                                        ? { ...d, description: e.target.value }
-                                       : {
-                                            date: '',
-                                            description: e.target.value,
-                                            amount: '',
-                                            category:
-                                               'Non Classifié' as Category,
-                                         },
+                                       : d,
                                  )
                               }
                               placeholder="Description"
@@ -219,18 +237,10 @@ export default function TransactionTable({
                            <div className="flex flex-col items-end">
                               <input
                                  type="number"
-                                 value={editDraft?.amount ?? ''}
+                                 value={editDraft.amount}
                                  onChange={(e) => {
                                     setEditDraft((d) =>
-                                       d
-                                          ? { ...d, amount: e.target.value }
-                                          : {
-                                               date: '',
-                                               description: '',
-                                               amount: e.target.value,
-                                               category:
-                                                  'Non Classifié' as Category,
-                                            },
+                                       d ? { ...d, amount: e.target.value } : d,
                                     );
                                     setEditErrors((err) => ({
                                        ...err,
@@ -258,7 +268,7 @@ export default function TransactionTable({
                         {/* Category */}
                         <td className="px-2 py-1 text-center">
                            <select
-                              value={editDraft?.category ?? 'Non Classifié'}
+                              value={editDraft.category}
                               onChange={(e) =>
                                  setEditDraft((d) =>
                                     d
@@ -267,13 +277,7 @@ export default function TransactionTable({
                                             category: e.target
                                                .value as Category,
                                          }
-                                       : {
-                                            date: '',
-                                            description: '',
-                                            amount: '',
-                                            category: e.target
-                                               .value as Category,
-                                         },
+                                       : d,
                                  )
                               }
                               className="text-sm border border-my-border-gray rounded px-2 py-1 bg-white text-my-gray focus:outline-none focus:ring-2 focus:ring-my-blue"
@@ -297,23 +301,17 @@ export default function TransactionTable({
                               {/* Save */}
                               <button
                                  onClick={() => {
-                                    const draft = editDraft ?? {
-                                       date: '',
-                                       description: '',
-                                       amount: '',
-                                       category: 'Non Classifié' as Category,
-                                    };
-                                    const errors = validateDraft(draft);
+                                    const errors = validateDraft(editDraft);
                                     if (Object.keys(errors).length > 0) {
                                        setEditErrors(errors);
                                        return;
                                     }
                                     onAddTransaction({
                                        id: crypto.randomUUID(),
-                                       date: draft.date,
-                                       description: draft.description,
-                                       amount: parseFloat(draft.amount),
-                                       category: draft.category,
+                                       date: editDraft.date,
+                                       description: editDraft.description,
+                                       amount: parseFloat(editDraft.amount),
+                                       category: editDraft.category,
                                        importId: 'manual',
                                        bankName: '',
                                        bankCategory: '',
@@ -368,7 +366,6 @@ export default function TransactionTable({
                         </td>
                      </tr>
                   )}
-
                   {transactions.map((transaction) => {
                      const isEditing = editingId === transaction.id;
                      const isDeleting = pendingDeleteId === transaction.id;

@@ -188,7 +188,7 @@ export default function App() {
    }
 
    function handleAddTransaction(transaction: Transaction) {
-      setTransactions((prev) => [transaction, ...prev]);
+      setTransactions((prev) => [{ ...transaction, edited: true }, ...prev]);
    }
 
    return (
