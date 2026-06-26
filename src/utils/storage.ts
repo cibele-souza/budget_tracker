@@ -1,5 +1,6 @@
-import type { Transaction, Budget, Import } from '../types';
+import type { Transaction, Budget, Import, ClassificationRule } from '../types';
 import { CATEGORIES } from '../types';
+import { DEFAULT_RULES } from './classificationRules';
 
 // ── Storage keys ─────────────────────────────────────────────────────────────
 
@@ -7,6 +8,7 @@ const KEYS = {
    transactions: 'budgettracker_transactions',
    budgets: 'budgettracker_budgets',
    imports: 'budgettracker_imports',
+   rules: 'budgettracker_rules',
 } as const;
 
 function initialiseBudgets(): Budget[] {
@@ -15,6 +17,10 @@ function initialiseBudgets(): Budget[] {
       defaultValue: 0,
       monthlyOverrides: {},
    }));
+}
+
+function initialiseRules(): ClassificationRule[] {
+   return DEFAULT_RULES;
 }
 
 // ── Generic helpers ───────────────────────────────────────────────────────────
@@ -52,6 +58,10 @@ export function saveImports(imports: Import[]): void {
    saveToStorage(KEYS.imports, imports);
 }
 
+export function saveRules(rules: ClassificationRule[]): void {
+   saveToStorage(KEYS.rules, rules);
+}
+
 // ── Typed load functions ──────────────────────────────────────────────────────
 
 export function loadTransactions(): Transaction[] {
@@ -66,10 +76,14 @@ export function loadImports(): Import[] {
    return loadFromStorage<Import[]>(KEYS.imports, []);
 }
 
+export function loadRules(): ClassificationRule[] {
+   return loadFromStorage<ClassificationRule[]>(KEYS.rules, initialiseRules());
+}
+
 // Reporting failures
 export function checkStorageHealth(): string | null {
    try {
-      const keys = [KEYS.transactions, KEYS.budgets, KEYS.imports];
+      const keys = [KEYS.transactions, KEYS.budgets, KEYS.imports, KEYS.rules];
       for (const key of keys) {
          const raw = localStorage.getItem(key);
          if (raw !== null) JSON.parse(raw); // will throw if corrupted

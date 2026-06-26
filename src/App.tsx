@@ -13,14 +13,17 @@ import type {
    Budget,
    BudgetTrackSnapshot,
    Category,
+   ClassificationRule,
 } from './types';
 import {
    loadTransactions,
    loadBudgets,
    loadImports,
+   loadRules,
    saveTransactions,
    saveBudgets,
    saveImports,
+   saveRules,
    checkStorageHealth,
 } from './utils/storage';
 import {
@@ -29,6 +32,7 @@ import {
    loadSnapshotFromDrive,
    saveSnapshotToDrive,
 } from './utils/googleDrive';
+import { DEFAULT_RULES } from './utils/classificationRules';
 
 type DriveModalState =
    | { case: 'notConnected' }
@@ -48,6 +52,7 @@ export default function App() {
    const [txMonths, setTxMonths] = useState<number[]>([]);
    const [txCategories, setTxCategories] = useState<Category[]>([]);
    const [txSearch, setTxSearch] = useState('');
+   const [rules, setRules] = useState<ClassificationRule[]>(loadRules);
 
    const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -61,6 +66,9 @@ export default function App() {
    useEffect(() => {
       saveImports(imports);
    }, [imports]);
+   useEffect(() => {
+      saveRules(rules);
+   }, [rules]);
 
    // Drive auto-save
    const saveToDrive = useCallback(() => {
@@ -79,9 +87,10 @@ export default function App() {
                      transactions: transactions.length,
                      budgets: budgets.length,
                      imports: imports.length,
+                     rules: rules.length,
                   },
                },
-               data: { transactions, budgets, imports },
+               data: { transactions, budgets, imports, rules },
             };
             await saveSnapshotToDrive(snapshot);
             setLastSyncedAt(new Date().toISOString());
@@ -132,6 +141,7 @@ export default function App() {
       setTransactions(snapshot.data.transactions);
       setBudgets(snapshot.data.budgets);
       setImports(snapshot.data.imports);
+      setRules(snapshot.data.rules ?? DEFAULT_RULES);
    }
 
    function handleLoadFromDrive(snapshot: BudgetTrackSnapshot) {
@@ -151,9 +161,10 @@ export default function App() {
                transactions: transactions.length,
                budgets: budgets.length,
                imports: imports.length,
+               rules: rules.length,
             },
          },
-         data: { transactions, budgets, imports },
+         data: { transactions, budgets, imports, rules },
       };
       await saveSnapshotToDrive(snapshot);
       setLastSyncedAt(new Date().toISOString());
@@ -214,6 +225,7 @@ export default function App() {
                               ]);
                               setImports((prev) => [...prev, newImport]);
                            }}
+                           rules={rules}
                         />
                      }
                   />
@@ -267,6 +279,8 @@ export default function App() {
                            onRestore={handleRestore}
                            lastSyncedAt={lastSyncedAt}
                            onManualSave={handleManualSave}
+                           rules={rules}
+                           onRulesChange={setRules}
                         />
                      }
                   />

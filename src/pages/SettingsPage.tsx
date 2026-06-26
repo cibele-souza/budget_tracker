@@ -2,6 +2,7 @@ import { useRef, useState } from 'react';
 import type {
    Budget,
    BudgetTrackSnapshot,
+   ClassificationRule,
    Import,
    Transaction,
 } from '../types';
@@ -19,6 +20,8 @@ interface SettingsPageProps {
    onRestore: (snapshot: BudgetTrackSnapshot) => void;
    lastSyncedAt: string | null;
    onManualSave: () => Promise<void>;
+   rules: ClassificationRule[];
+   onRulesChange: (rules: ClassificationRule[]) => void;
 }
 
 type ImportState =
@@ -34,6 +37,8 @@ export default function SettingsPage({
    onRestore,
    lastSyncedAt,
    onManualSave,
+   rules,
+   onRulesChange: _onRulesChange,
 }: SettingsPageProps) {
    const [exportSuccess, setExportSuccess] = useState(false);
    const [importState, setImportState] = useState<ImportState>({
@@ -46,7 +51,7 @@ export default function SettingsPage({
    const fileInputRef = useRef<HTMLInputElement>(null);
 
    function handleExport() {
-      exportSnapshot(transactions, budgets, imports);
+      exportSnapshot(transactions, budgets, imports, rules);
       setExportSuccess(true);
       setTimeout(() => setExportSuccess(false), 3000);
    }

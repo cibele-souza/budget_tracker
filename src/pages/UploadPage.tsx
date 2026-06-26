@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import type { Transaction, Import } from '../types';
+import type { Transaction, Import, ClassificationRule } from '../types';
 import { parseFile } from '../utils/parseFile';
 import { normaliseBourso, normaliseHelloBank } from '../utils/normalise';
 import DropZone from '../components/DropZone';
@@ -8,11 +8,13 @@ import ImportHistory from '../components/ImportHistory';
 interface UploadPageProps {
    imports: Import[];
    onImportComplete: (transactions: Transaction[], newImport: Import) => void;
+   rules: ClassificationRule[];
 }
 
 export default function UploadPage({
    imports,
    onImportComplete,
+   rules,
 }: UploadPageProps) {
    async function handleFileParsed(file: File) {
       const importId = uuidv4();
@@ -21,8 +23,8 @@ export default function UploadPage({
       // Pick the right normaliser based on detected bank
       const transactions =
          bankName === 'BoursoBank'
-            ? normaliseBourso(rows, importId)
-            : normaliseHelloBank(rows, importId);
+            ? normaliseBourso(rows, importId, rules)
+            : normaliseHelloBank(rows, importId, rules);
 
       if (transactions.length === 0) {
          throw new Error('No valid transactions found in this file.');

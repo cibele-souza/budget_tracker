@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import type { Transaction } from '../types';
+import type { Transaction, ClassificationRule } from '../types';
 import type { RawRow } from './parseFile';
 import { classifyTransaction } from './classify';
 
@@ -25,6 +25,7 @@ function parseAmount(raw: string | number): number {
 export function normaliseBourso(
    rows: RawRow[],
    importId: string,
+   rules: ClassificationRule[],
 ): Transaction[] {
    return rows
       .filter((row) => row['dateOp'] && row['amount'])
@@ -36,6 +37,7 @@ export function normaliseBourso(
          category: classifyTransaction(
             String(row['label'] ?? '').trim(),
             String(row['category'] ?? '').trim(),
+            rules,
          ),
          bankCategory: String(row['category'] ?? '').trim(),
          bankName: 'BoursoBank',
@@ -48,6 +50,7 @@ export function normaliseBourso(
 export function normaliseHelloBank(
    rows: RawRow[],
    importId: string,
+   rules: ClassificationRule[],
 ): Transaction[] {
    return rows
       .filter((row) => row['Date operation'] && row['Montant operation'])
@@ -59,6 +62,7 @@ export function normaliseHelloBank(
          category: classifyTransaction(
             String(row['Libelle operation'] ?? '').trim(),
             String(row['Sous Categorie operation'] ?? '').trim(),
+            rules,
          ),
          bankCategory: String(row['Sous Categorie operation'] ?? '').trim(),
          bankName: 'Hello Bank',

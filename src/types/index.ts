@@ -65,6 +65,14 @@ export interface Budget {
    monthlyOverrides: Record<string, number>; // e.g. { "2025-01": 1200 }
 }
 
+export interface ClassificationRule {
+   id: string;
+   keyword: string;
+   category: Category;
+   isDefault: boolean;
+   matchField: 'description' | 'bankCategory';
+}
+
 export interface BudgetTrackSnapshot {
    meta: {
       schemaVersion: number;
@@ -74,11 +82,13 @@ export interface BudgetTrackSnapshot {
          transactions: number;
          budgets: number;
          imports: number;
+         rules: number;
       };
    };
    data: {
       transactions: Transaction[];
       budgets: Budget[];
       imports: Import[];
+      rules: ClassificationRule[];
    };
 }

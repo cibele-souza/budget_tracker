@@ -3,6 +3,7 @@ import type {
    BudgetTrackSnapshot,
    Import,
    Transaction,
+   ClassificationRule,
 } from '../types';
 
 const SCHEMA_VERSION = 1;
@@ -11,6 +12,7 @@ export function exportSnapshot(
    transactions: Transaction[],
    budgets: Budget[],
    imports: Import[],
+   rules: ClassificationRule[],
 ): void {
    const snapshot: BudgetTrackSnapshot = {
       meta: {
@@ -21,9 +23,10 @@ export function exportSnapshot(
             transactions: transactions.length,
             budgets: budgets.length,
             imports: imports.length,
+            rules: rules.length,
          },
       },
-      data: { transactions, budgets, imports },
+      data: { transactions, budgets, imports, rules },
    };
 
    const json = JSON.stringify(snapshot, null, 2);
@@ -73,6 +76,11 @@ export function validateSnapshot(json: unknown): BudgetTrackSnapshot {
       !Array.isArray(data.imports)
    ) {
       throw new Error('Invalid file: missing or corrupted data arrays.');
+   }
+
+   // rules array is optional — older snapshots won't have it (seeded from defaults on restore)
+   if (data.rules !== undefined && !Array.isArray(data.rules)) {
+      throw new Error('Invalid file: corrupted rules data.');
    }
 
    // Check 5: counts match actual array lengths
