@@ -28,7 +28,7 @@ export default function TxYearFilter({
 
    const label =
       selectedYears.length === 0
-         ? 'All years'
+         ? 'Toutes les années'
          : selectedYears.length === 1
            ? selectedYears[0]
            : `${selectedYears.length} years`;
@@ -36,10 +36,10 @@ export default function TxYearFilter({
    return (
       <div className="relative">
          <div className="flex items-center gap-2">
-            <label className="text-sm text-my-gray font-medium">Year</label>
+            <label className="text-sm text-my-gray font-medium">Année</label>
             <button
                onClick={() => setIsOpen((prev) => !prev)}
-               className="text-sm border border-my-border-gray rounded px-2 py-1 bg-white text-my-gray hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-my-blue text-left flex justify-between items-center gap-2 min-w-24"
+               className="text-sm border border-my-border-gray rounded px-2 py-1 bg-white text-my-gray hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-my-blue text-left flex justify-between items-center gap-2 min-w-36"
             >
                <span>{label}</span>
                <span className="text-my-gray text-xs">
@@ -49,12 +49,12 @@ export default function TxYearFilter({
          </div>
 
          {isOpen && (
-            <div className="absolute right-0 mt-1 bg-white border border-my-border-gray rounded-lg shadow-lg z-20 min-w-24 py-1 max-h-72 overflow-y-auto content-end">
+            <div className="absolute right-0 mt-1 bg-white border border-my-border-gray rounded-lg shadow-lg z-20 min-w-36 py-1 max-h-72 overflow-y-auto content-end">
                <button
                   onClick={clearAll}
-                  className="w-full text-left px-3 py-1.5 text-xs text-my-gray hover:bg-my-bg-light-gray border-b border-my-border-gray"
+                  className="w-full text-left px-3 py-1.5 text-xs text-my-gray hover:bg-my-bg-light-gray border-b border-my-border-gray "
                >
-                  All years
+                  Toutes les années
                </button>
                {years.map((year) => {
                   const checked = selectedYears.includes(year);

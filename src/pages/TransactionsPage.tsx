@@ -91,7 +91,7 @@ export default function TransactionsPage({
          <h1 className="text-2xl font-semibold mb-6">Transactions</h1>
 
          {/* Filters */}
-         <div className="flex flex-wrap gap-3 mb-4 items-end">
+         <div className="flex flex-wrap gap-3 mb-2 items-end w-full">
             <TxYearFilter
                years={availableYears}
                selectedYears={txYears}
@@ -105,40 +105,39 @@ export default function TransactionsPage({
                selectedCategories={txCategories}
                onChange={onTxCategoriesChange}
             />
-            <div className="flex flex-col gap-1">
+            <div className="flex items-center gap-2">
                <label className="text-sm text-my-gray font-medium">
-                  Search
+                  Rechercher
                </label>
                <input
                   type="text"
                   value={txSearch}
                   onChange={(e) => onTxSearchChange(e.target.value)}
-                  placeholder="Search description..."
+                  placeholder="Description..."
                   className="text-sm border border-my-border-gray rounded px-2 py-1 bg-white text-my-gray focus:outline-none focus:ring-2 focus:ring-my-blue w-52"
                />
             </div>
             {hasActiveFilters && (
                <button
                   onClick={handleReset}
-                  className="text-sm text-my-gray border border-my-border-gray rounded px-3 py-1.5 hover:border-my-red hover:text-my-red transition-colors self-end"
+                  className="text-sm text-my-gray border border-my-border-gray rounded px-2 py-1 hover:border-my-red hover:text-my-red transition-colors self-end"
                >
-                  Reset filters
+                  Réinitialiser filtres
                </button>
             )}
-         </div>
-
-         {/* Row count + Add button */}
-         <div className="flex items-center justify-between mb-3">
-            <p className="text-xs text-my-gray">
-               Showing {filtered.length} of {transactions.length} transactions
-            </p>
             <button
                onClick={() => setIsAddingNew(true)}
-               className="px-3 py-1.5 bg-my-blue text-white text-sm rounded hover:opacity-90 transition-opacity"
+               className="ml-auto px-2 py-1 bg-my-blue text-white text-sm rounded min-w-24 hover:opacity-90 transition-opacity"
             >
-               + Add transaction
+               + Ajouter transaction
             </button>
          </div>
+
+         {/* Row count */}
+         <p className="text-xs text-my-gray text-left mb-0">
+            Affichage de {filtered.length} transactions sur{' '}
+            {transactions.length}
+         </p>
 
          {/* Content */}
          {transactions.length === 0 && !isAddingNew ? (
@@ -158,15 +157,15 @@ export default function TransactionsPage({
                   />
                </svg>
                <p className="text-gray-500 font-medium mb-1">
-                  No transactions yet
+                  Aucune transaction pour le moment.
                </p>
                <p className="text-gray-400 text-sm">
-                  Upload a bank export to get started.
+                  Aucune transaction ne correspond aux filtres actuels.
                </p>
             </div>
          ) : filtered.length === 0 && !isAddingNew ? (
             <p className="text-my-gray text-sm text-center mt-6">
-               No transactions match the current filters.
+               Aucune transaction ne correspond aux filtres actuels.
             </p>
          ) : (
             <TransactionTable

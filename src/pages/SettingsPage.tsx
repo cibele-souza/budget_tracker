@@ -12,6 +12,7 @@ import {
    disconnectFromDrive,
    isConnectedToDrive,
 } from '../utils/googleDrive';
+import RulesManager from '../components/RulesManager';
 
 interface SettingsPageProps {
    transactions: Transaction[];
@@ -38,7 +39,7 @@ export default function SettingsPage({
    lastSyncedAt,
    onManualSave,
    rules,
-   onRulesChange: _onRulesChange,
+   onRulesChange,
 }: SettingsPageProps) {
    const [exportSuccess, setExportSuccess] = useState(false);
    const [importState, setImportState] = useState<ImportState>({
@@ -47,6 +48,7 @@ export default function SettingsPage({
    const [driveConnected, setDriveConnected] = useState(isConnectedToDrive());
    const [driveError, setDriveError] = useState<string | null>(null);
    const [driveSaveSuccess, setDriveSaveSuccess] = useState(false);
+   const [showRulesManager, setShowRulesManager] = useState(false);
 
    const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -118,6 +120,19 @@ export default function SettingsPage({
                : 'Échec de la sauvegarde sur Google Drive.',
          );
       }
+   }
+
+   if (showRulesManager) {
+      return (
+         <RulesManager
+            rules={rules}
+            onSave={(updatedRules) => {
+               onRulesChange(updatedRules);
+               setShowRulesManager(false);
+            }}
+            onBack={() => setShowRulesManager(false)}
+         />
+      );
    }
 
    return (
@@ -302,6 +317,25 @@ export default function SettingsPage({
                   ✓ Données restaurées avec succès
                </p>
             )}
+         </section>
+
+         <div className="border-t border-my-border-gray mb-4" />
+
+         {/* Classification rules section */}
+         <section className="mb-10">
+            <h2 className="text-lg font-medium mb-2">
+               Règles de classification
+            </h2>
+            <p className="text-sm text-my-gray mb-4">
+               Gérez les règles utilisées pour classifier automatiquement vos
+               transactions lors de l'importation.
+            </p>
+            <button
+               onClick={() => setShowRulesManager(true)}
+               className="px-4 py-2 bg-my-blue text-white rounded hover:opacity-90 transition-opacity text-sm"
+            >
+               Gérer les règles de classification
+            </button>
          </section>
 
          <div className="border-t border-my-border-gray" />

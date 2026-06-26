@@ -16,7 +16,7 @@ export default function YearFilter({
             <select
                value={selectedYear}
                onChange={(e) => onYearChange(parseInt(e.target.value))}
-               className="text-sm border border-my-border-gray rounded px-2 py-1 pr-6 bg-white text-my-gray hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-my-blue text-left flex justify-between items-center gap-2 min-w-24"
+               className="appearance-none text-sm border border-my-border-gray rounded px-2 py-1 pr-6 bg-white text-my-gray hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-my-blue min-w-20"
             >
                {years.map((year) => (
                   <option key={year} value={year}>
