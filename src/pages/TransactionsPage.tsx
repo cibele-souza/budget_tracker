@@ -141,7 +141,7 @@ export default function TransactionsPage({
             <button
                onClick={() => exportTransactionsToCsv(filtered)}
                className="text-my-gray border border-my-border-gray rounded p-1 hover:border-my-blue hover:text-my-blue transition-colors"
-               title="Export to CSV"
+               title="Exporter fichier CSV"
             >
                <svg
                   xmlns="http://www.w3.org/2000/svg"

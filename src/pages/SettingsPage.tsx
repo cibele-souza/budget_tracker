@@ -227,8 +227,8 @@ export default function SettingsPage({
                Restaurer à partir d'une sauvegarde
             </h2>
             <p className="text-sm text-my-gray mb-4">
-               Remplacez toutes les données actuelles par un fichier de
-               sauvegarde BudgetTrack précédemment exporté.
+               Remplacez toutes les données actuelles par une sauvegarde
+               précédemment exportée.
             </p>
 
             {/* File picker — only show when idle or error */}
@@ -237,7 +237,7 @@ export default function SettingsPage({
                <>
                   <button
                      onClick={() => fileInputRef.current?.click()}
-                     className="px-4 py-2 border border-my-border-gray text-my-gray rounded hover:border-my-blue hover:text-my-blue transition-colors text-sm"
+                     className="px-4 py-2 bg-gray-600 opacity-80 text-white rounded hover:opacity-100 transition-opacity text-sm"
                   >
                      Choisir le fichier de sauvegarde
                   </button>
@@ -332,7 +332,7 @@ export default function SettingsPage({
             </p>
             <button
                onClick={() => setShowRulesManager(true)}
-               className="px-4 py-2 bg-my-blue text-white rounded hover:opacity-90 transition-opacity text-sm"
+               className="px-4 py-2 bg-gray-600 opacity-80 text-white rounded hover:opacity-100 transition-opacity text-sm"
             >
                Gérer les règles de classification
             </button>

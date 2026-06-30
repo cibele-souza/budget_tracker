@@ -36,6 +36,7 @@ import { DEFAULT_RULES } from './utils/classificationRules';
 
 type DriveModalState =
    | { case: 'notConnected' }
+   | { case: 'connecting' }
    | { case: 'noFile' }
    | { case: 'fileFound'; snapshot: BudgetTrackSnapshot }
    | null;
@@ -128,6 +129,7 @@ export default function App() {
    }
 
    async function handleModalConnect() {
+      setDriveModalState({ case: 'connecting' });
       try {
          await connectToDrive();
          await checkDriveForBackup();

@@ -2,6 +2,7 @@ import type { BudgetTrackSnapshot } from '../types';
 
 type DriveModalState =
    | { case: 'notConnected' }
+   | { case: 'connecting' }
    | { case: 'noFile' }
    | { case: 'fileFound'; snapshot: BudgetTrackSnapshot };
 
@@ -71,7 +72,42 @@ export default function DriveModal({
                </>
             )}
 
-            {/* Case 2: connected but no file found */}
+            {/* Case 2: connecting to Drive */}
+            {state.case === 'connecting' && (
+               <>
+                  <div className="flex justify-center mb-4">
+                     <svg
+                        className="animate-spin w-8 h-8 text-my-blue"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                     >
+                        <circle
+                           className="opacity-25"
+                           cx="12"
+                           cy="12"
+                           r="10"
+                           stroke="currentColor"
+                           strokeWidth="4"
+                        />
+                        <path
+                           className="opacity-75"
+                           fill="currentColor"
+                           d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                        />
+                     </svg>
+                  </div>
+                  <h2 className="text-lg font-semibold mb-2">
+                     Connexion en cours…
+                  </h2>
+                  <p className="text-sm text-my-gray">
+                     Connexion à Google Drive et recherche d'une sauvegarde
+                     existante…
+                  </p>
+               </>
+            )}
+
+            {/* Case 3: connected but no file found */}
             {state.case === 'noFile' && (
                <>
                   <h2 className="text-lg font-semibold mb-2">
@@ -91,7 +127,7 @@ export default function DriveModal({
                </>
             )}
 
-            {/* Case 3: file found */}
+            {/* Case 4: file found */}
             {state.case === 'fileFound' && (
                <>
                   <h2 className="text-lg font-semibold mb-2">

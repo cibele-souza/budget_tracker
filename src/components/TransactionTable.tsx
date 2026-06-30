@@ -666,7 +666,7 @@ export default function TransactionTable({
                                  {isDeleting && (
                                     <div className="absolute right-0 top-7 bg-white border border-my-border-gray rounded-lg shadow-lg z-20 p-3 w-48">
                                        <p className="text-sm text-gray-700 mb-3">
-                                          Delete this transaction?
+                                          Exclure cette transaction ?
                                        </p>
                                        <div className="flex gap-2">
                                           <button
@@ -677,7 +677,7 @@ export default function TransactionTable({
                                              }
                                              className="flex-1 px-2 py-1 bg-my-red text-white text-xs rounded hover:opacity-90 transition-opacity"
                                           >
-                                             Confirm
+                                             Confirmer
                                           </button>
                                           <button
                                              onClick={() =>
@@ -685,7 +685,7 @@ export default function TransactionTable({
                                              }
                                              className="flex-1 px-2 py-1 border border-my-border-gray text-my-gray text-xs rounded hover:border-gray-400 transition-colors"
                                           >
-                                             Cancel
+                                             Annuler
                                           </button>
                                        </div>
                                     </div>
