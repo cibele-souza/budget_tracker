@@ -9,6 +9,7 @@ interface BudgetRowProps {
    selectedYear: number;
    onChange: (updated: Budget) => void;
    rowIndex: number;
+   totalRows: number;
 }
 
 export default function BudgetRow({
@@ -16,6 +17,7 @@ export default function BudgetRow({
    selectedYear,
    onChange,
    rowIndex,
+   totalRows,
 }: BudgetRowProps) {
    function handleDefaultChange(value: number) {
       onChange({ ...budget, defaultValue: value });
@@ -56,6 +58,8 @@ export default function BudgetRow({
                <DefaultValueInput
                   value={budget.defaultValue}
                   onChange={handleDefaultChange}
+                  rowIndex={rowIndex}
+                  totalRows={totalRows}
                />
                <ApplyDefaultButton onClick={handleApplyDefault} />
             </div>
@@ -74,7 +78,7 @@ export default function BudgetRow({
                      rowIndex={rowIndex}
                      colIndex={i}
                      totalCols={12}
-                     totalRows={26}
+                     totalRows={totalRows}
                   />
                </td>
             );

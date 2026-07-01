@@ -42,6 +42,7 @@ export default function BudgetTable({
                      selectedYear={selectedYear}
                      onChange={onChange}
                      rowIndex={index}
+                     totalRows={budgets.length}
                   />
                ))}
             </tbody>
